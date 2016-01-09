@@ -5,4 +5,4 @@ pull:
 	docker pull cs50/php
 
 build:
-	docker build .
+	docker build -t cs50/php .
