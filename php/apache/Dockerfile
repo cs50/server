@@ -40,7 +40,6 @@ RUN apt-get update && \
 COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # app
-COPY . /srv/www/
 ONBUILD COPY . /srv/www/
 
 # start container

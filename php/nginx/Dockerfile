@@ -36,7 +36,7 @@ COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN apt-get update && \
     apt-get install -y curl git && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-ONBUILD COPY ./composer.json composer.json
+ONBUILD ./composer.json composer.json
 ONBUILD RUN composer --prefer-source install && rm -f composer.json composer.lock
 
 # supervisor
@@ -45,7 +45,6 @@ RUN apt-get update && \
 COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # app
-COPY . /srv/www/
 ONBUILD COPY . /srv/www/
 
 # start container
