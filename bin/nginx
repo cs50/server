@@ -10,4 +10,4 @@ env | sed "s/\(.*\)=\(.*\)/env[\1]='\2'/" >> /etc/php5/fpm/pool.d/www.conf
 service php5-fpm start
 
 # start nginx
-nginx
+/usr/sbin/nginx
