@@ -46,6 +46,7 @@ COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord
 
 # app
 ONBUILD COPY . /srv/www/
+ONBUILD RUN chown -R www-data:www-data /srv/www
 
 # start container
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
