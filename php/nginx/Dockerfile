@@ -15,6 +15,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y mysql-client telnet vim
 COPY ./etc/vimrc /etc/vimrc
+COPY ./etc/profile.d/cs50.sh /etc/profile.d/
 
 # apache2
 RUN apt-get update && \

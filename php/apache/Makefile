@@ -7,6 +7,9 @@ pull:
 build:
 	docker build -t cs50/php:apache .
 
+rebuild:
+	docker build --no-cache -t cs50/php:apache .
+
 run: build
 	docker run -i -p 80:80 -t cs50/php:apache
 
