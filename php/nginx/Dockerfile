@@ -29,7 +29,7 @@ COPY ./etc/php5/fpm/conf.d/php.ini /etc/php5/fpm/conf.d/php.ini
 
 # nginx
 RUN apt-get update && \
-    apt-get install -y nginx nginx-extras
+    apt-get install -y nginx
 RUN rm -f /etc/nginx/sites-enabled/*
 COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
