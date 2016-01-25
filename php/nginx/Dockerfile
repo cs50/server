@@ -23,7 +23,7 @@ RUN apt-get update && \
 
 # php5
 RUN apt-get update && \
-    apt-get install -y php5-cli php5-curl php5-fpm php5-gmp php5-mcrypt php5-memcache php5-memcached php5-mysql php5-xdebug && \
+    apt-get install -y php5-cli php5-curl php5-fpm php5-gmp php5-intl php5-mcrypt php5-memcache php5-memcached php5-mysql php5-xdebug && \
     php5enmod mcrypt 
 COPY ./etc/php5/fpm/conf.d/php.ini /etc/php5/fpm/conf.d/php.ini
 
