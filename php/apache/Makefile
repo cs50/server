@@ -1,4 +1,4 @@
-default: build
+default: run
 
 pull:
 	docker login
@@ -11,7 +11,7 @@ rebuild:
 	docker build --no-cache -t cs50/php:apache .
 
 run: build
-	docker run -i -p 80:80 -t cs50/php:apache
+	docker run -i --name php_apache -p 80:80 --rm -t cs50/php:apache
 
-bash: build
-	docker run -i -p 80:80 -t cs50/php:apache bash
+bash:
+	docker exec -it php_apache bash

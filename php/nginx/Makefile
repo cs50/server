@@ -1,4 +1,4 @@
-default: build
+default: run
 
 pull:
 	docker login
@@ -11,7 +11,7 @@ rebuild:
 	docker build --no-cache -t cs50/php:nginx .
 
 run: build
-	docker run -i -p 80:80 -t cs50/php:nginx
+	docker run -i --name php_nginx -p 80:80 --rm -t cs50/php:nginx
 
-bash: build
-	docker run -i -p 80:80 -t cs50/php:nginx bash
+bash:
+	docker exec -it php_nginx bash

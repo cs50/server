@@ -20,13 +20,16 @@ COPY ./etc/profile.d/cs50.sh /etc/profile.d/
 # php5
 RUN apt-get update && \
     apt-get install -y php5-cli php5-curl php5-gmp php5-intl php5-mcrypt php5-memcache php5-memcached php5-mysql php5-xdebug && \
-    php5enmod mcrypt 
+    php5dismod xdebug
 
 # apache2
 RUN apt-get update && \
     apt-get install -y apache2 libapache2-mod-php5
 COPY ./etc/apache2/conf-available/apache2.conf /etc/apache2/conf-available/apache2.conf
 RUN rm -f /etc/apache2/sites-enabled/* && ln -s ../conf-available/apache2.conf /etc/apache2/conf-enabled/apache2.conf
+COPY ./usr/local/sbin/apache2 /usr/local/sbin/apache2
+RUN chmod a+x /usr/local/sbin/apache2
+RUN mkdir -p /srv/www/public
 
 # composer
 RUN apt-get update && \
