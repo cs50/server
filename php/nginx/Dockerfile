@@ -20,7 +20,8 @@ COPY ./etc/profile.d/cs50.sh /etc/profile.d/
 # php5
 RUN apt-get update && \
     apt-get install -y php5-cli php5-curl php5-fpm php5-gmp php5-intl php5-mcrypt php5-memcache php5-memcached php5-mysql php5-xdebug && \
-    php5dismod xdebug
+    php5dismod xdebug && \
+    php5enmod mcrypt
 COPY ./etc/php5/fpm/conf.d/php.ini /etc/php5/fpm/conf.d/php.ini
 COPY ./usr/local/sbin/php5-fpm /usr/local/sbin/php5-fpm
 RUN chmod a+x /usr/local/sbin/php5-fpm
