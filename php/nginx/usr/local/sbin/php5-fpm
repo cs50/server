@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# environment variables
 /bin/sed -i '/^env\[.\+\] *=.*/d' /etc/php5/fpm/pool.d/www.conf
 /usr/bin/env | /bin/sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | /usr/bin/awk 'length <= 1024' >> /etc/php5/fpm/pool.d/www.conf
-/usr/sbin/php5-fpm -F
+
+# php5-fpm
+if [ "$APPLICATION_ENV" == "dev" ]; then
+    /usr/sbin/php5-fpm -F \
+    -d display_errors=On \
+    -d display_startup_errors=On \
+    -d error_reporting=E_ALL \
+    -d zend_extension=xdebug.so
+else
+    /usr/sbin/php5-fpm -F
+fi
