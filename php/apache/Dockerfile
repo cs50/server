@@ -26,8 +26,9 @@ RUN apt-get update && \
 # apache2
 RUN apt-get update && \
     apt-get install -y apache2 libapache2-mod-php5
+RUN rm -f /etc/apache2/sites-enabled/* /etc/php5/apache2/php.ini
 COPY ./etc/apache2/conf-available/apache2.conf /etc/apache2/conf-available/apache2.conf
-RUN rm -f /etc/apache2/sites-enabled/* && ln -s ../conf-available/apache2.conf /etc/apache2/conf-enabled/apache2.conf
+RUN a2enconf apache2
 COPY ./usr/local/sbin/apache2 /usr/local/sbin/apache2
 RUN chmod a+x /usr/local/sbin/apache2
 RUN mkdir -p /srv/www/public

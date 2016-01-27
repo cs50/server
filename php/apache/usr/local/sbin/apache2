@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # apache2
-# TODO: conditionally enable php.ini directives for dev
 if [ "$APPLICATION_ENV" == "dev" ]; then
     /usr/sbin/php5enmod xdebug && \
+    /bin/cp -f /usr/share/php5/php.ini-development /etc/php5/apache2/php.ini && \
     /usr/sbin/apache2ctl -D FOREGROUND
 else
-    /usr/sbin/php5enmod xdebug && \
+    /usr/sbin/php5dismod xdebug && \
+    /bin/cp -f /usr/share/php5/php.ini-production /etc/php5/apache2/php.ini && \
     /usr/sbin/apache2ctl -D FOREGROUND
 fi
