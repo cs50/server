@@ -6,11 +6,12 @@
 
 # php5-fpm
 if [ "$APPLICATION_ENV" == "dev" ]; then
+    /usr/sbin/php5enmod xdebug && \
     /usr/sbin/php5-fpm -F \
     -d display_errors=On \
     -d display_startup_errors=On \
-    -d error_reporting=E_ALL \
-    -d zend_extension=xdebug.so
+    -d error_reporting=E_ALL
 else
+    /usr/sbin/php5dismod xdebug && \
     /usr/sbin/php5-fpm -F
 fi
