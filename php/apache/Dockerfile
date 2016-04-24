@@ -37,8 +37,6 @@ RUN mkdir -p /srv/www/public
 RUN apt-get update && \
     apt-get install -y curl git && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-ONBUILD COPY ./composer.json composer.json
-ONBUILD RUN composer --prefer-source install && rm -f composer.json composer.lock
 
 # supervisor
 RUN apt-get update && \
@@ -48,6 +46,7 @@ COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord
 # app
 ONBUILD COPY . /srv/www/
 ONBUILD RUN chown -R www-data:www-data /srv/www
+ONBUILD RUN composer --self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
 
 # start container
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
