@@ -1,5 +1,4 @@
 FROM ubuntu:14.04.2
-MAINTAINER David J. Malan <malan@harvard.edu>
 
 # working directory
 RUN rm -rf /srv/www/*
