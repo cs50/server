@@ -6,3 +6,8 @@ alias rm="rm -i"
 
 # environment variables
 export EDITOR=nano
+
+if [ "$PS1" ]; then
+    echo "This is CS50 CLI."
+    export PS1="# "
+fi
