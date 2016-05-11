@@ -21,7 +21,7 @@ RUN apt-get update && \
 
 # environment
 COPY ./etc/profile.d/cs50.sh /etc/profile.d/
-COPY ./etc/vimrc /etc/vimrc
+COPY ./etc/vim/vimrc.local /etc/vim/
 
 # working directory
 WORKDIR /root
