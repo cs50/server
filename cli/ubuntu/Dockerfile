@@ -23,6 +23,22 @@ RUN apt-get update && \
 COPY ./etc/profile.d/cs50.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
+# TEMPORARY FOR asciidoc50 UNTIL MOVED INTO DEB
+# apt-get
+RUN apt-get update && \
+    apt-get install \
+        curl \
+        wget
+# gem
+RUN gem install \
+    asciidoctor \
+    coderay \
+    thread_safe \
+    tilt
+COPY ./asciidoc50 /opt/asciidoc50
+RUN chmod a+x /opt/asciidoc50/bin/asciidoc50
+ENV PATH "$PATH:/opt/asciidoc50/bin"
+
 # working directory
 WORKDIR /root
 
