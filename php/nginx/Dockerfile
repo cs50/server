@@ -1,4 +1,4 @@
-FROM ubuntu:14.04.2
+FROM ubuntu:14.04
 
 # working directory
 RUN rm -rf /srv/www/*
