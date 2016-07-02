@@ -1,4 +1,4 @@
-FROM ubuntu:14.04.2
+FROM ubuntu:14.04
 
 # working directory
 RUN rm -rf /srv/www/*
@@ -25,7 +25,7 @@ RUN apt-get update && \
 # apache2
 RUN apt-get update && \
     apt-get install -y apache2 libapache2-mod-php5
-RUN rm -f /etc/apache2/sites-enabled/* /etc/php5/apache2/php.ini
+RUN rm -f /etc/apache2/conf-enabled/* /etc/apache2/sites-enabled/* /etc/php5/apache2/php.ini
 COPY ./etc/apache2/conf-available/apache2.conf /etc/apache2/conf-available/apache2.conf
 RUN a2enconf apache2
 COPY ./usr/local/sbin/apache2 /usr/local/sbin/apache2
@@ -36,6 +36,7 @@ RUN mkdir -p /srv/www/public
 RUN apt-get update && \
     apt-get install -y curl git && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ONBUILD RUN composer --self-update
 
 # supervisor
 RUN apt-get update && \
