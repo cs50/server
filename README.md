@@ -1,6 +1,6 @@
 # CS50 Docker Images
 
-* `cs50/cli:ubuntu`, Ubuntu
+* `cs50/cli`, `cs50/cli:ubuntu` ([_Dockerfile_](https://github.com/cs50/docker/blob/master/cli/ubuntu/14.04/Dockerfile))
 * `cs50/php:apache`, Ubuntu + PHP-FPM + Apache
 * `cs50/php:nginx`, Ubuntu + PHP-FPM + nginx
 
