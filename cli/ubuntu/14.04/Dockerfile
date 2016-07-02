@@ -1,34 +1,34 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 
 # packages
 RUN apt-get update && \
     apt-get install -y \
         build-essential \
         clang \
-        composer \
+        curl \
         gdb \
         git \
         man \
-        openjdk-8-jdk \
-        openjdk-8-jre-headless \
-        php-cli \
-        php-curl \
-        php-gmp \
-        php-intl \
-        php-mcrypt \
+        openjdk-7-jdk \
+        openjdk-7-jre-headless \
+        php5-cli \
+        php5-curl \
+        php5-gmp \
+        php5-intl \
+        php5-mcrypt \
         ruby-dev \
-        vim
+        vim \
+        wget
+
+# composer
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+ONBUILD RUN composer --self-update
 
 # environment
 COPY ./etc/profile.d/cs50.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
 # TEMPORARY FOR asciidoc50 UNTIL MOVED INTO DEB
-# apt-get
-RUN apt-get update && \
-    apt-get install \
-        curl \
-        wget
 # gem
 RUN gem install \
     asciidoctor \
