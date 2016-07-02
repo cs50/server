@@ -48,7 +48,7 @@ COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord
 # app
 ONBUILD COPY . /srv/www/
 ONBUILD RUN chown -R www-data:www-data /srv/www
-ONBUILD RUN composer --self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
+ONBUILD RUN composer self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
 
 # start container
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
