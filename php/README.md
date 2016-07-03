@@ -25,3 +25,5 @@ any Dockerfile that inherits from `cs50/php` must explicitly expose a port, as v
     EXPOSE 80
 
 even though `cs50/php` already exposes as much.
+
+Cf. http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/troubleshooting-docker.html#no-expose-found-in-dockerfile.
