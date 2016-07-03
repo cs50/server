@@ -1,9 +1,0 @@
-web:
-  build: .
-  container_name: php_nginx
-  environment:
-    APPLICATION_ENV: dev
-  ports:
-    - "80:80"
-  volumes:
-    - .:/srv/www
