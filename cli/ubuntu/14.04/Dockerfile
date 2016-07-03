@@ -23,6 +23,7 @@ RUN apt-get update && \
         python-pip \
         ruby \
         ruby-dev \
+        telnet \
         vim \
         wget
 
@@ -35,7 +36,15 @@ COPY ./etc/profile.d/cs50.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
 # TEMPORARY FOR asciidoc50 UNTIL MOVED INTO DEB
-# gem
+ENV DEBIAN_FRONTEND noninteractive
+ENV LANG "en_US.UTF-8"
+ENV LC_CTYPE "en_US.UTF-8"
+#RUN locale-gen "en_US.UTF-8" && \
+#    dpkg-reconfigure locales && \
+#        apt-get install -y rubygems-integration
+RUN dpkg-reconfigure locales && \
+        apt-get install -y rubygems-integration
+
 RUN gem install \
     asciidoctor \
     coderay \
