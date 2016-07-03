@@ -22,7 +22,7 @@ RUN apt-get update && \
 
 # composer
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
-ONBUILD RUN composer --self-update
+ONBUILD RUN composer self-update
 
 # environment
 COPY ./etc/profile.d/cs50.sh /etc/profile.d/
