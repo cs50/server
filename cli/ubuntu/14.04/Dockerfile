@@ -11,11 +11,17 @@ RUN apt-get update && \
         man \
         openjdk-7-jdk \
         openjdk-7-jre-headless \
+        perl \
         php5-cli \
         php5-curl \
         php5-gmp \
         php5-intl \
         php5-mcrypt \
+        python \
+        python3 \
+        python-dev \
+        python-pip \
+        ruby \
         ruby-dev \
         vim \
         wget
