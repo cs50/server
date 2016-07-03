@@ -4,7 +4,7 @@ FROM ubuntu:14.04
 RUN rm -rf /srv/www/*
 WORKDIR /srv/www
 
-# TCP 80
+# port
 EXPOSE 80
 
 # https://github.com/monokrome/docker-wine/issues/3
