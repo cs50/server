@@ -8,4 +8,4 @@ rebuild:
 	docker build --no-cache --pull -t cs50/cli:ubuntu .
 
 run:
-	docker run -i --rm -v `pwd`/:/root -t cs50/cli:ubuntu
+	docker run -i --rm -v "$(PWD)"/:/home/ubuntu/workspace -t cs50/cli:ubuntu
