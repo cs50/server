@@ -40,5 +40,10 @@ COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord
 # 
 COPY ./etc/motd /etc/
 COPY . /home/ubuntu/workspace
+
+COPY ./usr/local/sbin/server50 /usr/local/sbin/server50
+RUN chmod a+x /usr/local/sbin/server50
+
 #RUN chown -R www-data:www-data /srv/www
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/local/sbin/server50"]
