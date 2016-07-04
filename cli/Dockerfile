@@ -65,13 +65,15 @@ ENV PATH "$PATH:/opt/asciidoc50/bin"
 
 # ubuntu
 # TODO: decide if this breaks child files
-RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
-    chown -R ubuntu:ubuntu /home/ubuntu && \
-    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
+#RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
+#    chown -R ubuntu:ubuntu /home/ubuntu && \
+#    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
 
 # bash
 #RUN echo export PS1='\[$(printf "\x0f")\033[01;34m\]\w\[\033[00m\]$(__git_ps1 " (%s)") $ ' >> /home/ubuntu/foo
 
 # entrypoint
-ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
-CMD ["cd workspace ; bash -l"]
+#ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
+#CMD ["cd workspace ; bash -l"]
+WORKDIR /root
+CMD ["bash", "-l"]
