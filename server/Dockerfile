@@ -4,9 +4,6 @@ FROM cs50/cli
 # TODO: decide if should be 5050
 EXPOSE 80
 
-ENV LC_ALL "en_US.UTF-8"
-RUN dpkg-reconfigure locales
-
 # php
 RUN apt-get update && \
     apt-get install -y php5-memcache php5-memcached php5-mysql php5-xdebug && \
@@ -40,7 +37,8 @@ COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord
 #ONBUILD RUN chown -R www-data:www-data /srv/www
 #ONBUILD RUN composer self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
 
-# TEMP
+# 
+COPY ./etc/motd /etc/
 COPY . /home/ubuntu/workspace
 #RUN chown -R www-data:www-data /srv/www
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

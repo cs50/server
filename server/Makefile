@@ -6,8 +6,5 @@ build:
 rebuild:
 	docker build --no-cache -t cs50/server .
 
-run: build
-	docker run -i --name server50 -p 80:80 --rm -t cs50/server
-
-shell:
-	docker exec -it server50 bash
+run:
+	docker run -i --name server50 -p 80:80 --rm -v "$(PWD)"/:/home/ubuntu/workspace -t cs50/server

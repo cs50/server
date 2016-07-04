@@ -1,5 +1,13 @@
 FROM ubuntu:14.04
 
+# ENV
+ENV DEBIAN_FRONTEND noninteractive
+RUN locale-gen "en_US.UTF-8" && \
+    dpkg-reconfigure locales
+ENV LANG "en_US.UTF-8"
+ENV LC_ALL "en_US.UTF-8"
+ENV LC_CTYPE "en_US.UTF-8"
+
 # packages
 RUN apt-get update && \
     apt-get install -y \
@@ -39,9 +47,6 @@ COPY ./etc/profile.d/cli50.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
 # TEMPORARY FOR asciidoc50 UNTIL MOVED INTO DEB
-ENV DEBIAN_FRONTEND noninteractive
-ENV LANG "en_US.UTF-8"
-ENV LC_CTYPE "en_US.UTF-8"
 #RUN locale-gen "en_US.UTF-8" && \
 #    dpkg-reconfigure locales && \
 #        apt-get install -y rubygems-integration
@@ -49,8 +54,7 @@ ENV LC_CTYPE "en_US.UTF-8"
 #        apt-get install -y rubygems-integration
 #
 # to avoid man sudoers complaining with "man: can't set the locale; make sure $LC_* and $LANG are correct"
-RUN locale-gen "en_US.UTF-8" && \
-    gem install \
+RUN gem install \
         asciidoctor \
         coderay \
         thread_safe \
@@ -70,4 +74,4 @@ RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bas
 
 # entrypoint
 ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
-CMD ["cd workspace ; bash"]
+CMD ["cd workspace ; bash -l"]
