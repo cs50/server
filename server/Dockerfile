@@ -1,12 +1,11 @@
 FROM cs50/cli
 
-# working directory
-RUN rm -rf /srv/www/*
-WORKDIR /srv/www
-
 # port
 # TODO: decide if should be 5050
 EXPOSE 80
+
+ENV LC_ALL "en_US.UTF-8"
+RUN dpkg-reconfigure locales
 
 # php
 RUN apt-get update && \
@@ -42,7 +41,6 @@ COPY ./etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord
 #ONBUILD RUN composer self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
 
 # TEMP
-COPY . /srv/www/
+COPY . /home/ubuntu/workspace
 #RUN chown -R www-data:www-data /srv/www
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
-ENTRYPOINT ["bash", "-l"]
