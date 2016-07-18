@@ -1,29 +1,25 @@
 FROM cs50/cli
 
 # port
-# TODO: decide if should be 5050
+# TODO: decide if should be 8000
 EXPOSE 80
 
-# php
+# gunicorn
+RUN apt-get update && \
+    apt-get install -y gunicorn
+
+# php, php-fpm
 RUN apt-get update && \
     apt-get install -y php5-fpm php5-memcache php5-memcached php5-mysql php5-xdebug && \
     php5dismod xdebug && \
     php5enmod mcrypt
-
-# php-fpm
 RUN rm -f /etc/php5/fpm/php.ini
 COPY ./etc/php5/fpm/conf.d/php.ini /etc/php5/fpm/conf.d/php.ini
 COPY ./usr/local/sbin/php5-fpm /usr/local/sbin/php5-fpm
 RUN chmod a+x /usr/local/sbin/php5-fpm
 
-# apache2
-RUN apt-get update && \
-    apt-get install -y apache2 libapache2-mod-php5
-RUN rm -f /etc/apache2/conf-enabled/* /etc/apache2/sites-enabled/* /etc/php5/apache2/php.ini
-COPY ./etc/apache2/conf-available/apache2.conf /etc/apache2/conf-available/apache2.conf
-RUN a2enconf apache2 && a2enmod rewrite
-COPY ./usr/local/sbin/apache2 /usr/local/sbin/apache2
-RUN chmod a+x /usr/local/sbin/apache2
+# python
+RUN pip install django flask virtualenv
 
 # nginx
 RUN apt-get update && \
