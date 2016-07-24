@@ -46,7 +46,7 @@ start() {
     cat /opt/cs50/server50/var/php5/fpm/www.conf | env="$env" envsubst '${env}' > /var/opt/cs50/server50/www.conf
 
     cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/etc/opt/cs50/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
-    APPLICATION_ENV=dev supervisord -c /var/opt/cs50/server50/supervisord.conf
+    APPLICATION_ENV=dev /opt/cs50/server50/bin/supervisord
     
     return 0
 
@@ -72,7 +72,7 @@ stop() {
         usage "$1"
         return 1
     fi
-    supervisorctl shutdown > /dev/null
+    /opt/cs50/server50/bin/supervisorctl shutdown > /dev/null
     rm -f /var/opt/cs50/server50/*
     return 0
 }

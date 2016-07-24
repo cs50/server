@@ -1,0 +1,3 @@
+#!/bin/bash
+
+supervisord -c /var/opt/cs50/server50/supervisord.conf "$@"

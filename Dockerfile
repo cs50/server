@@ -55,8 +55,8 @@ RUN ln -s /opt/cs50/server50/etc/* /etc/opt/cs50/server50/
 # /var/opt/cs50/server50
 RUN mkdir -p /var/opt/cs50/server50
 
-# /etc
-COPY ./etc/* /etc/
+# /etc/motd
+COPY ./etc/motd /etc/
 #COPY . /home/ubuntu/workspace
 #COPY . /root
 
