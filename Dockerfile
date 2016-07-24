@@ -42,21 +42,21 @@ RUN apt-get update && \
 #ONBUILD RUN composer self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
 
 
-# /opt/server50
-COPY ./opt/server50 /opt/server50
-RUN chmod a+x /opt/server50/bin/*
+# /opt/cs50/server50
+COPY ./opt/cs50/server50 /opt/cs50/server50
+RUN chmod a+x /opt/cs50/server50/bin/*
 RUN mkdir -p /opt/bin
-RUN ln -s /opt/server50/bin/server50 /opt/bin/
+RUN ln -s /opt/cs50/server50/bin/server50 /opt/bin/
 
-# /etc/opt/server50
-RUN mkdir -p /etc/opt/server50
-RUN ln -s /opt/server50/etc/* /etc/opt/server50/
+# /etc/opt/cs50/server50
+RUN mkdir -p /etc/opt/cs50/server50
+RUN ln -s /opt/cs50/server50/etc/* /etc/opt/cs50/server50/
 
-# /var/opt/server50
-RUN mkdir -p /var/opt/server50
+# /var/opt/cs50/server50
+RUN mkdir -p /var/opt/cs50/server50
 
-# MOTD
-COPY ./motd /etc/
+# /etc
+COPY ./etc/* /etc/
 #COPY . /home/ubuntu/workspace
 #COPY . /root
 

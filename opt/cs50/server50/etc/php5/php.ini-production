@@ -6,9 +6,7 @@ short_open_tag = Off
 track_errors = Off
 
 [cgi]
-; https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
-cgi.fix_pathinfo = 0
+cgi.fix_pathinfo = 0 ; https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
 
 [date]
-; default timezone used by the date functions
 date.timezone = UTC

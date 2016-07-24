@@ -1,0 +1,12 @@
+[PHP]
+display_errors = On
+display_startup_errors = On
+error_reporting = E_ALL
+short_open_tag = Off
+track_errors = On
+
+[cgi]
+cgi.fix_pathinfo = 0 ; https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04
+
+[date]
+date.timezone = UTC

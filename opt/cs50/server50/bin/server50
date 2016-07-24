@@ -6,7 +6,7 @@ restart() {
         return 1
     fi
     stop
-    start $(</var/opt/server50/start)
+    start $(</var/opt/cs50/server50/start)
 }
 
 start() {
@@ -16,7 +16,7 @@ start() {
         return 1
     fi
 
-    if [ -f "/var/opt/server50/start" ]; then
+    if [ -f "/var/opt/cs50/server50/start" ]; then
         echo "CS50 Server is already running"
         return 1
     fi
@@ -28,30 +28,30 @@ start() {
         return 1
     fi
 
-    rm -f /var/opt/server50/*
+    rm -f /var/opt/cs50/server50/*
 
     # environment variables
 
     if [ "$APPLICATION_ENV" == "dev" ]; then
         php5enmod xdebug && \
-        cp -f /etc/opt/server50/php5/php.ini-development /var/opt/server50/php.ini
+        cp -f /etc/opt/cs50/server50/php5/php.ini-development /var/opt/cs50/server50/php.ini
     else
         php5dismod xdebug && \
-        cp -f /etc/opt/server50/php5/php.ini-production /var/opt/server50/php.ini
+        cp -f /etc/opt/cs50/server50/php5/php.ini-production /var/opt/cs50/server50/php.ini
     fi
 
-    cat /opt/server50/var/nginx/php.conf | port="$port" root="$root" envsubst '${port}:${root}' > /var/opt/server50/default
+    cat /opt/cs50/server50/var/nginx/php.conf | port="$port" root="$root" envsubst '${port}:${root}' > /var/opt/cs50/server50/default
 
     local env=$(env | sort | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024')
-    cat /opt/server50/var/php5/fpm/www.conf | env="$env" envsubst '${env}' > /var/opt/server50/www.conf
+    cat /opt/cs50/server50/var/php5/fpm/www.conf | env="$env" envsubst '${env}' > /var/opt/cs50/server50/www.conf
 
-    cat /opt/server50/var/supervisor/supervisord.conf | files="/etc/opt/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/server50/supervisord.conf
-    APPLICATION_ENV=dev supervisord -c /var/opt/server50/supervisord.conf
+    cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/etc/opt/cs50/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
+    APPLICATION_ENV=dev supervisord -c /var/opt/cs50/server50/supervisord.conf
     
     return 0
 
     # 
-    echo "$@" > /var/opt/server50/start
+    echo "$@" > /var/opt/cs50/server50/start
 
     #sed -i "s#listen 80 default_server;#listen $port default_server;#" /etc/nginx/sites-enabled/php.conf
 
@@ -73,7 +73,7 @@ stop() {
         return 1
     fi
     supervisorctl shutdown > /dev/null
-    rm -f /var/opt/server50/*
+    rm -f /var/opt/cs50/server50/*
     return 0
 }
 
