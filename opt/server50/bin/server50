@@ -39,17 +39,15 @@ start() {
         cp -f /etc/opt/server50/php5/php.ini-production /var/opt/server50/php.ini
     fi
 
-    #cp /etc/php5/fpm/pool.d/www.conf /var/opt/server50/
-    #/usr/bin/env | /bin/sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | /usr/bin/awk 'length <= 1024' >> /var/opt/server50/www.conf
-
-    #cp /etc/php5/fpm/php-fpm.conf /var/opt/server50/
-    #sed -i "s#include=.*#include=/var/opt/server50/www.conf#" /var/opt/server50/php-fpm.conf
-
     cp /opt/server50/var/nginx/php.conf /var/opt/server50/default
-    sed -i "s#root html;#root $root;#" /var/opt/server50/default
+    sed -i "s#^\(\s*root \).*\$#\1$root;#" /var/opt/server50/default
 
-    cp /etc/opt/server50/supervisor/php.conf /var/opt/server50/supervisord.conf
-    APPLICATION_ENV=dev supervisord -c /etc/opt/server50/supervisor/supervisord.conf
+    cp /opt/server50/var/php5/fpm/www.conf /var/opt/server50/
+    /usr/bin/env | /bin/sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | /usr/bin/awk 'length <= 1024' >> /var/opt/server50/www.conf
+
+    cp /opt/server50/var/supervisor/supervisord.conf /var/opt/server50/
+    sed -i "s#^files\s*=.*\$#files = /etc/opt/server50/supervisor/php.conf#" /var/opt/server50/supervisord.conf
+    APPLICATION_ENV=dev supervisord -c /var/opt/server50/supervisord.conf
     
     return 0
 
