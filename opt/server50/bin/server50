@@ -1,0 +1,140 @@
+#!/bin/bash
+
+restart() {
+    if [ $# -ne 0 ]; then
+        usage
+        return 1
+    fi
+    stop
+    start $(</var/opt/server50/start)
+}
+
+start() {
+
+    if [ $# -eq 0 -o $# -gt 2 ]; then
+        usage "$1"
+        return 1
+    fi
+
+    if [ -f "/var/opt/server50/start" ]; then
+        echo "CS50 Server is already running"
+        return 1
+    fi
+
+    root=$(readlink -f "$1")
+    if [ ! -d "$root" ]; then
+        echo "No such directory: $root"
+        return 1
+    fi
+
+    rm -f /var/opt/server50/*
+
+    # environment variables
+
+    if [ "$APPLICATION_ENV" == "dev" ]; then
+        php5enmod xdebug && \
+        cp -f /etc/opt/server50/php5/php.ini-development /var/opt/server50/php.ini
+    else
+        php5dismod xdebug && \
+        cp -f /etc/opt/server50/php5/php.ini-production /var/opt/server50/php.ini
+    fi
+
+    #cp /etc/php5/fpm/pool.d/www.conf /var/opt/server50/
+    #/usr/bin/env | /bin/sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | /usr/bin/awk 'length <= 1024' >> /var/opt/server50/www.conf
+
+    #cp /etc/php5/fpm/php-fpm.conf /var/opt/server50/
+    #sed -i "s#include=.*#include=/var/opt/server50/www.conf#" /var/opt/server50/php-fpm.conf
+
+    cp /opt/server50/var/nginx/php.conf /var/opt/server50/default
+    sed -i "s#root html;#root $root;#" /var/opt/server50/default
+
+    cp /etc/opt/server50/supervisor/php.conf /var/opt/server50/supervisord.conf
+    APPLICATION_ENV=dev supervisord -c /etc/opt/server50/supervisor/supervisord.conf
+    
+    return 0
+
+    #
+    case "$2" in
+        php)
+            cp ./php.conf /etc/nginx/sites-enabled/
+            root=$(readlink -f "$3")
+            if [ ! -d "$root" ]; then
+                echo "No such directory: $3"
+                return 1
+            fi
+            echo $root
+            sed -i "s#root /root;#root $root;#" /etc/nginx/sites-enabled/php.conf
+        ;;
+        python)
+            cp ./python.conf /etc/nginx/sites-enabled/
+        ;;
+    esac
+
+    # 
+    echo "$@" > /var/opt/server50/start
+
+    #sed -i "s#listen 80 default_server;#listen $port default_server;#" /etc/nginx/sites-enabled/php.conf
+
+    APPLICATION_ENV=dev supervisord -c /etc/supervisor/supervisord.conf
+
+}
+
+status() {
+    if [ "$#" -ne 0 ]; then
+        usage "$1"
+        return 1
+    fi
+    echo TODO
+}
+
+stop() {
+    if [ $# -ne 0 ]; then
+        usage "$1"
+        return 1
+    fi
+    supervisorctl shutdown > /dev/null
+    rm -f /var/opt/server50/*
+    return 0
+}
+
+usage() {
+    echo "Usage: server50 command options"
+}
+
+
+command="$1"
+shift
+
+case "$command" in
+    help)
+        usage
+        exit 0
+    ;;
+    restart)
+        restart
+    ;;
+    start)
+
+        if start "$@"; then
+            echo "Started CS50 Server"
+            exit 0
+        else
+            exit 1
+        fi
+    ;;
+    status)
+        status "$@"
+    ;;
+    stop)
+        if stop "$@"; then
+            echo "Stopped CS50 Server"
+            exit 0
+        else
+            exit 1
+        fi
+    ;;
+    *)
+        usage
+        exit 1
+    ;;
+esac

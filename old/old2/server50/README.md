@@ -6,7 +6,6 @@
 * Decide how to handle other PHP `index.php` usage.
 * Determine how to specify path to python app (hardcoded in `/usr/local/bin/gunicorn` at the moment).
 * Decide whether to foreground `supervisord` (for dev and prod and C9).
-* Move `cli` and `server` to own repos.
 * Add to `.ebextensions`, a la `render50-server`:
 ```
     # TODO: migrate to .ebextensions, a la https://github.com/cs50/render50-server/blob/master/.ebextensions/nginx.config

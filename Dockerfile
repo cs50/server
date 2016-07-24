@@ -13,10 +13,10 @@ RUN apt-get update && \
     apt-get install -y php5-fpm php5-memcache php5-memcached php5-mysql php5-xdebug && \
     php5dismod xdebug && \
     php5enmod mcrypt
-RUN rm -f /etc/php5/fpm/php.ini
-COPY ./etc/php5/fpm/conf.d/php.ini /etc/php5/fpm/conf.d/php.ini
-COPY ./usr/local/sbin/php5-fpm /usr/local/sbin/php5-fpm
-RUN chmod a+x /usr/local/sbin/php5-fpm
+#RUN rm -f /etc/php5/fpm/php.ini
+#COPY ./etc/php5/fpm/conf.d/php.ini /etc/php5/fpm/conf.d/php.ini
+#COPY ./usr/local/sbin/php5-fpm /usr/local/sbin/php5-fpm
+#RUN chmod a+x /usr/local/sbin/php5-fpm
 
 # python
 RUN pip install django flask virtualenv
@@ -24,29 +24,41 @@ RUN pip install django flask virtualenv
 # nginx
 RUN apt-get update && \
     apt-get install -y nginx nginx-extras
-RUN rm -f /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
-COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
-COPY ./etc/nginx/sites-available/* /etc/nginx/sites-available/
-COPY ./usr/local/sbin/nginx /usr/local/sbin/nginx
-RUN chmod a+x /usr/local/sbin/nginx
+#RUN rm -f /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
+#COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
+#COPY ./etc/nginx/sites-available/* /etc/nginx/sites-available/
+#COPY ./usr/local/sbin/nginx /usr/local/sbin/nginx
+#RUN chmod a+x /usr/local/sbin/nginx
 
 # supervisor
 RUN apt-get update && \
     apt-get install -y supervisor
-COPY ./etc/supervisor/conf.d/* /etc/supervisor/conf.d/
+#RUN rm -f /etc/supervisor/conf.d/*
+#COPY ./etc/supervisor/supervisord.conf /etc/supervisor/
 
 # app
 #ONBUILD COPY . /srv/www/
 #ONBUILD RUN chown -R www-data:www-data /srv/www
 #ONBUILD RUN composer self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
 
-# 
-COPY ./etc/motd /etc/
-#COPY . /home/ubuntu/workspace
-COPY . /root
 
-COPY ./usr/local/bin/server50 /usr/local/bin/server50
-RUN chmod a+x /usr/local/bin/server50
+# /opt/server50
+COPY ./opt/server50 /opt/server50
+RUN chmod a+x /opt/server50/bin/*
+RUN mkdir -p /opt/bin
+RUN ln -s /opt/server50/bin/server50 /opt/bin/
+
+# /etc/opt/server50
+RUN mkdir -p /etc/opt/server50
+RUN ln -s /opt/server50/etc/* /etc/opt/server50/
+
+# /var/opt/server50
+RUN mkdir -p /var/opt/server50
+
+# MOTD
+COPY ./motd /etc/
+#COPY . /home/ubuntu/workspace
+#COPY . /root
 
 #RUN chown -R www-data:www-data /srv/www
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
