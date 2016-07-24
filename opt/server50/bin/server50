@@ -21,7 +21,8 @@ start() {
         return 1
     fi
 
-    root=$(readlink -f "$1")
+    local root=$(readlink -f "$1")
+    local port=80
     if [ ! -d "$root" ]; then
         echo "No such directory: $root"
         return 1
@@ -39,34 +40,15 @@ start() {
         cp -f /etc/opt/server50/php5/php.ini-production /var/opt/server50/php.ini
     fi
 
-    cp /opt/server50/var/nginx/php.conf /var/opt/server50/default
-    sed -i "s#^\(\s*root \).*\$#\1$root;#" /var/opt/server50/default
+    cat /opt/server50/var/nginx/php.conf | port="$port" root="$root" envsubst '${port}:${root}' > /var/opt/server50/default
 
-    cp /opt/server50/var/php5/fpm/www.conf /var/opt/server50/
-    /usr/bin/env | /bin/sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | /usr/bin/awk 'length <= 1024' >> /var/opt/server50/www.conf
+    local env=$(env | sort | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024')
+    cat /opt/server50/var/php5/fpm/www.conf | env="$env" envsubst '${env}' > /var/opt/server50/www.conf
 
-    cp /opt/server50/var/supervisor/supervisord.conf /var/opt/server50/
-    sed -i "s#^files\s*=.*\$#files = /etc/opt/server50/supervisor/php.conf#" /var/opt/server50/supervisord.conf
+    cat /opt/server50/var/supervisor/supervisord.conf | files="/etc/opt/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/server50/supervisord.conf
     APPLICATION_ENV=dev supervisord -c /var/opt/server50/supervisord.conf
     
     return 0
-
-    #
-    case "$2" in
-        php)
-            cp ./php.conf /etc/nginx/sites-enabled/
-            root=$(readlink -f "$3")
-            if [ ! -d "$root" ]; then
-                echo "No such directory: $3"
-                return 1
-            fi
-            echo $root
-            sed -i "s#root /root;#root $root;#" /etc/nginx/sites-enabled/php.conf
-        ;;
-        python)
-            cp ./python.conf /etc/nginx/sites-enabled/
-        ;;
-    esac
 
     # 
     echo "$@" > /var/opt/server50/start
