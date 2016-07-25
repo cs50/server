@@ -106,7 +106,7 @@ start() {
 
         # configure Supervisor for Python
         cat /opt/cs50/server50/var/supervisor/python.conf | app_module="$app_module" envsubst '${app_module}' > /var/opt/cs50/server50/python.conf
-        cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/var/opt/cs50/server50/supervisor/python.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
+        cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/var/opt/cs50/server50/python.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
 
     fi
 

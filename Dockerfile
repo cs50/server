@@ -47,8 +47,8 @@ RUN mkdir -p /opt/bin
 RUN ln -s /opt/cs50/server50/bin/server50 /opt/bin/
 
 # /etc/opt/cs50/server50
-RUN mkdir -p /etc/opt/cs50/server50
-RUN ln -s /opt/cs50/server50/etc/* /etc/opt/cs50/server50/
+RUN mkdir -p /etc/opt/cs50
+RUN ln -s /opt/cs50/server50/etc /etc/opt/cs50/server50
 
 # /var/opt/cs50/server50
 RUN mkdir -p /var/opt/cs50/server50
