@@ -62,7 +62,7 @@ start() {
     # delete variable data
     rm -f /var/opt/cs50/server50/*
 
-    # configure NGINX for PHP
+    # configure server
     if [ $# -eq 1 -o "$lang" == "php" ]; then
 
         # default files to try
@@ -98,8 +98,16 @@ start() {
         # configure Supervisor for PHP
         cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/etc/opt/cs50/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
 
+    # configure NGINX for Python
     elif [ "$lang" == "py" ]; then
-        echo
+
+        # configure NGINX for Python
+        cat /opt/cs50/server50/var/nginx/python.conf | port="$port" root="$root" envsubst '${port}:${root}' > /var/opt/cs50/server50/default
+
+        # configure Supervisor for Python
+        cat /opt/cs50/server50/var/supervisor/python.conf | app_module="$app_module" envsubst '${app_module}' > /var/opt/cs50/server50/python.conf
+        cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/var/opt/cs50/server50/supervisor/python.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
+
     fi
 
     # start Supervisor
