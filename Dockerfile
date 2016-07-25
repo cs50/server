@@ -2,7 +2,7 @@ FROM cs50/cli
 
 # port
 # TODO: decide if should be 8000
-EXPOSE 80
+EXPOSE 8080
 
 # gunicorn
 RUN apt-get update && \
@@ -27,8 +27,6 @@ RUN apt-get update && \
 #RUN rm -f /etc/nginx/sites-available/* /etc/nginx/sites-enabled/*
 #COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
 #COPY ./etc/nginx/sites-available/* /etc/nginx/sites-available/
-#COPY ./usr/local/sbin/nginx /usr/local/sbin/nginx
-#RUN chmod a+x /usr/local/sbin/nginx
 
 # supervisor
 RUN apt-get update && \
@@ -57,8 +55,14 @@ RUN mkdir -p /var/opt/cs50/server50
 
 # /etc/motd
 COPY ./etc/motd /etc/
+
 #COPY . /home/ubuntu/workspace
 #COPY . /root
+
+# 
+RUN rm -rf /srv/www
+RUN mkdir -p /srv/www
+WORKDIR /srv/www
 
 #RUN chown -R www-data:www-data /srv/www
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]

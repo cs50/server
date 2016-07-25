@@ -1,79 +1,151 @@
 #!/bin/bash
 
+# restarts server
 restart() {
+
+    # expect 0 arguments
     if [ $# -ne 0 ]; then
         usage
         return 1
     fi
-    stop
-    start $(</var/opt/cs50/server50/start)
-}
 
-start() {
-
-    if [ $# -eq 0 -o $# -gt 2 ]; then
-        usage "$1"
-        return 1
-    fi
-
+    # check for lock
     if [ -f "/var/opt/cs50/server50/start" ]; then
         echo "CS50 Server is already running"
         return 1
     fi
 
+    # stop server
+    stop
+
+    # restart server with same arguments
+    start $(</var/opt/cs50/server50/start)
+}
+
+# starts server
+start() {
+
+    # expect 1 or 2 arguments
+    if [ $# -eq 0 -o $# -gt 2 ]; then
+        usage "$1"
+        return 1
+    fi
+
+    # check whether still running
+    if [ -f "/var/opt/cs50/server50/start" ]; then
+        echo "CS50 Server is already running"
+        return 1
+    fi
+
+    # TODO: validate port
+    local port=8080
+
+    # validate root
     local root=$(readlink -f "$1")
-    local port=80
     if [ ! -d "$root" ]; then
         echo "No such directory: $root"
         return 1
     fi
 
+    # validate app, if any
+    if [ $# -eq 2 ]; then
+        local app=$(readlink -f "$2")
+        if [ ! -f "$app" ]; then
+            echo "No such file: $2"
+            return 1
+        fi
+    fi
+ 
+    # infer language from file extension
+    local lang=$(echo "${app##*.}" | tr '[:upper:]' '[:lower:]')
+
+    # delete variable data
     rm -f /var/opt/cs50/server50/*
 
-    # environment variables
+    # configure NGINX for PHP
+    if [ $# -eq 1 -o "$lang" == "php" ]; then
 
-    if [ "$APPLICATION_ENV" == "dev" ]; then
-        php5enmod xdebug && \
-        cp -f /etc/opt/cs50/server50/php5/php.ini-development /var/opt/cs50/server50/php.ini
-    else
-        php5dismod xdebug && \
-        cp -f /etc/opt/cs50/server50/php5/php.ini-production /var/opt/cs50/server50/php.ini
+        # default files to try
+        local try_files="\$uri \$uri/ =404"
+
+        # ensure app is within root 
+        if [ ! -z "$app" ]; then
+            if [[ ! "$app" =~ ^"$root".* ]]; then
+                echo "Invalid file: $2 is not in $1"
+                return 1
+            fi
+
+            # try app
+            try_files="\$uri ${app#$root}"
+        fi
+
+        # development mode if $APPLICATION_ENV is "dev", else production mode
+        if [ "$APPLICATION_ENV" == "dev" ]; then
+            php5enmod xdebug && \
+            cp -f /etc/opt/cs50/server50/php5/php.ini-development /var/opt/cs50/server50/php.ini
+        else
+            php5dismod xdebug && \
+            cp -f /etc/opt/cs50/server50/php5/php.ini-production /var/opt/cs50/server50/php.ini
+        fi
+
+        # expose environment variables to php5-fpm
+        local env=$(env | sort | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024')
+        cat /opt/cs50/server50/var/php5/fpm/www.conf | env="$env" envsubst '${env}' > /var/opt/cs50/server50/www.conf
+
+        # configure NGINX for PHP
+        cat /opt/cs50/server50/var/nginx/php.conf | try_files="$try_files" port="$port" root="$root" envsubst '${port}:${root}:${try_files}' > /var/opt/cs50/server50/default
+
+        # configure Supervisor for PHP
+        cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/etc/opt/cs50/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
+
+    elif [ "$lang" == "py" ]; then
+        echo
     fi
 
-    cat /opt/cs50/server50/var/nginx/php.conf | port="$port" root="$root" envsubst '${port}:${root}' > /var/opt/cs50/server50/default
-
-    local env=$(env | sort | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024')
-    cat /opt/cs50/server50/var/php5/fpm/www.conf | env="$env" envsubst '${env}' > /var/opt/cs50/server50/www.conf
-
-    cat /opt/cs50/server50/var/supervisor/supervisord.conf | files="/etc/opt/cs50/server50/supervisor/php.conf" envsubst '${files}' > /var/opt/cs50/server50/supervisord.conf
+    # start Supervisor
     APPLICATION_ENV=dev /opt/cs50/server50/bin/supervisord
-    
-    return 0
 
-    # 
+    # remember how server was started (for restarts)
     echo "$@" > /var/opt/cs50/server50/start
 
-    #sed -i "s#listen 80 default_server;#listen $port default_server;#" /etc/nginx/sites-enabled/php.conf
-
-    APPLICATION_ENV=dev supervisord -c /etc/supervisor/supervisord.conf
-
+    # success
+    echo "Started CS50 Server"
+    return 0
 }
 
+# reports server's status
 status() {
+
+    # expect 0 arguments
     if [ "$#" -ne 0 ]; then
         usage "$1"
         return 1
     fi
+
+    # check status
     echo TODO
+
+    # success
+    return 0
 }
 
+# stops server
 stop() {
+
+    # export 0 arguments
     if [ $# -ne 0 ]; then
         usage "$1"
         return 1
     fi
+
+    # shut down server
     /opt/cs50/server50/bin/supervisorctl shutdown > /dev/null
-    rm -f /var/opt/cs50/server50/*
+
+    # delete lock, leaving other files in case needed for diagnostics
+    rm -f /var/opt/cs50/server50/start
+
+    # success
+    echo "Stopped CS50 Server"
     return 0
 }
 
@@ -81,37 +153,29 @@ usage() {
     echo "Usage: server50 command options"
 }
 
-
+# main
 command="$1"
 shift
-
 case "$command" in
     help)
         usage
-        exit 0
+        exit $?
     ;;
     restart)
         restart
+        exit $?
     ;;
     start)
-
-        if start "$@"; then
-            echo "Started CS50 Server"
-            exit 0
-        else
-            exit 1
-        fi
+        start "$@"
+        exit $?
     ;;
     status)
         status "$@"
+        exit $?
     ;;
     stop)
-        if stop "$@"; then
-            echo "Stopped CS50 Server"
-            exit 0
-        else
-            exit 1
-        fi
+        stop "$@"
+        exit $?
     ;;
     *)
         usage
