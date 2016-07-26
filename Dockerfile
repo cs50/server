@@ -3,23 +3,20 @@ FROM cs50/cli
 # port
 EXPOSE 8080
 
-# gunicorn
+# nginx
+RUN apt-get update && \
+    apt-get install -y nginx nginx-extras
+
+# python, gunicorn
 RUN apt-get update && \
     apt-get install -y pip3 && \
-    pip3 install gunicorn
+    pip3 install django flask gunicorn virtualenv
 
 # php, php-fpm
 RUN apt-get update && \
     apt-get install -y php5-fpm php5-memcache php5-memcached php5-mysql php5-xdebug && \
     php5dismod xdebug && \
     php5enmod mcrypt
-
-# python
-RUN pip install django flask virtualenv
-
-# nginx
-RUN apt-get update && \
-    apt-get install -y nginx nginx-extras
 
 # supervisor
 RUN apt-get update && \
