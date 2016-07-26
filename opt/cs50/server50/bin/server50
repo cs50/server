@@ -37,6 +37,9 @@ start() {
         return 1
     fi
 
+    # delete variable data
+    rm -f /var/opt/cs50/server50/*
+
     # TODO: validate port
     local port=8080
 
@@ -46,6 +49,16 @@ start() {
         echo "No such directory: $root"
         return 1
     fi
+
+    # https://docs.python.org/2/reference/lexical_analysis.html#identifiers
+    if [[ $# -eq 2 && "$2" =~ ^([A-Za-z_]([0-9A-Za-z_])*(\.[A-Za-z_]([0-9A-Za-z_])*)*)(:([A-Za-z_]([0-9A-Za-z_])*))?$ ]]; then
+        local module=${BASH_REMATCH[1]}
+        local variable=${BASH_REMATCH[6]}
+    fi
+    exit
+
+    # TODO: python3 -c "import myproject.wsgi; myproject.wsgi.application" 2> /dev/null
+    # TODO: configure gunicorn for module and variable
 
     # validate app, if any
     if [ $# -eq 2 ]; then
@@ -59,10 +72,7 @@ start() {
     # infer language from file extension
     local lang=$(echo "${app##*.}" | tr '[:upper:]' '[:lower:]')
 
-    # delete variable data
-    rm -f /var/opt/cs50/server50/*
-
-    # configure server
+    # configure server for PHP
     if [ $# -eq 1 -o "$lang" == "php" ]; then
 
         # default files to try
