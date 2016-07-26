@@ -3,7 +3,8 @@
 * Tidy `/opt/cs50/server50/etc/nginx/mime.types`.
 * Tidy `/opt/cs50/server50/etc/nginx/fastcgi_params`.
 * Combine `/etc/opt/cs50/server50/nginx.conf` and /var/opt/cs50/server50/default` and store in `/var/opt/cs50/server50/nginx.conf` (to parallel `/var/opt/cs50/server50/gunicorn.conf`).
-* Add `pip install requirements.txt`.
+* Add `pip3 install requirements.txt`.
+* Switch from `[]` to `[[]]`.
 * Ensure `composer install` works.
 * Finish support for `gunicorn` and Python:
     * http://flask.pocoo.org/docs/0.11/deploying/wsgi-standalone/#gunicorn
