@@ -4,3 +4,4 @@
     * `--app-type`
     * `--startup-file`
     * `--static-files-dir`
+* Add phpMyAdmin.
