@@ -12,9 +12,8 @@ COPY ./server50_1.0.0_amd64.deb /tmp
 RUN apt-get update && (dpkg -i /tmp/server50_1.0.0_amd64.deb || true) && apt-get install -f -y
 RUN rm -f /tmp/server50_1.0.0_amd64.deb
 
-#COPY . /home/ubuntu/workspace
-#COPY . /root
+# install app
+ONBUILD COPY . /root
 
 #RUN chown -R www-data:www-data /srv/www
-#CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
-#CMD ["/usr/local/bin/server50"]
+CMD ["passenger", "start"]
