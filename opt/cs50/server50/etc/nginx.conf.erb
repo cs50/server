@@ -35,6 +35,10 @@ http {
     # Learn more at:
     # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
+    passenger_ctl hook_before_watchdog_initialization /opt/cs50/server50/bin/before_watchdog_initialization.sh;
+    passenger_ctl hook_after_watchdog_shutdown /opt/cs50/server50/bin/after_watchdog_shutdown.sh;
+    server_tokens off;
+
     ### END your own configuration options ###
 
     default_type application/octet-stream;
@@ -71,6 +75,18 @@ http {
         # conflict with the ones Passenger already sets.
         # Learn more at:
         # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
+
+        index index.php index.html;
+        location ~ \.php$ {
+            fastcgi_param HTTP_X_FORWARDED_HOST $host;
+            fastcgi_param HTTP_X_FORWARDED_SERVER $host;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            fastcgi_param SERVER_NAME $host;
+            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            include /opt/cs50/server50/etc/fastcgi_params;
+            try_files $uri =404;
+        }
 
         ### END your own configuration options ###
     }

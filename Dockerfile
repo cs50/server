@@ -31,7 +31,15 @@ RUN gem install rack -v=1.6.4 && \
 # /etc/motd
 COPY ./etc/motd /etc/
 
-ENV PASSENGER_NGINX_CONFIG_TEMPLATE "/srv/www/nginx.conf.erb"
+RUN mkdir -p /opt/bin
+RUN mkdir -p /opt/cs50/server50
+COPY ./opt/cs50/server50/bin /opt/cs50/server50/bin
+RUN chmod a+X /opt/cs50/server50/bin/*
+RUN ln -s /opt/cs50/server50/bin /opt/bin/server50
+COPY ./opt/cs50/server50/etc /opt/cs50/server50/etc
+
+ENV PASSENGER_NGINX_CONFIG_TEMPLATE /opt/cs50/server50/etc/nginx.conf.erb
+ENV PASSENGER_PORT 8080
 
 #COPY . /home/ubuntu/workspace
 #COPY . /root
