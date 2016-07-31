@@ -1,9 +1,0 @@
-accesslog =
-bind = "unix:/var/opt/cs50/server50/gunicorn.sock"
-chdir =
-daemon = false
-errorlog =
-group = www-data
-pid = "/var/opt/cs50/server50/gunicorn.pid"
-user = www-data
-workers = 16
