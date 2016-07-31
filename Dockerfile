@@ -3,53 +3,38 @@ FROM cs50/cli
 # port
 EXPOSE 8080
 
-# nginx
-RUN apt-get update && \
-    apt-get install -y nginx nginx-extras
-
+# TODO: decide whether to move to cli50
 # python, gunicorn
 RUN apt-get update && \
-    apt-get install -y pip3 && \
-    pip3 install django flask gunicorn virtualenv
+    pip3 install django flask virtualenv
 
-# php, php-fpm
+# php-fpm
 RUN apt-get update && \
     apt-get install -y php5-fpm php5-memcache php5-memcached php5-mysql php5-xdebug && \
     php5dismod xdebug && \
     php5enmod mcrypt
 
-# supervisor
-RUN apt-get update && \
-    apt-get install -y supervisor
-
-# app
-#ONBUILD COPY . /srv/www/
-#ONBUILD RUN chown -R www-data:www-data /srv/www
-#ONBUILD RUN composer self-update && ((composer --prefer-source -q install && rm -f composer.json composer.lock) || true)
-
-# /opt/cs50/server50
-COPY ./opt/cs50/server50 /opt/cs50/server50
-RUN chmod a+x /opt/cs50/server50/bin/*
-RUN mkdir -p /opt/bin
-RUN ln -s /opt/cs50/server50/bin/server50 /opt/bin/
-
-# /etc/opt/cs50/server50
-RUN mkdir -p /etc/opt/cs50
-RUN ln -s /opt/cs50/server50/etc /etc/opt/cs50/server50
-
-# /var/opt/cs50/server50
-RUN mkdir -p /var/opt/cs50/server50
+# passenger
+# https://github.com/phusion/passenger/issues/1394
+RUN gem install rack -v=1.6.4 && \
+    gem install passenger && \
+    passenger-config build-native-support && \
+    passenger-config install-standalone-runtime --auto && \
+    passenger-config validate-install --auto
+#COPY ./etc/apt/sources.list.d/passenger.list /etc/apt/sources.list.d/
+#RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 && \
+#    apt-get install -y apt-transport-https ca-certificates && \
+#    apt-get update && \
+#    apt-get install -y passenger && \
+#    passenger-config validate-install
 
 # /etc/motd
 COPY ./etc/motd /etc/
 
+ENV PASSENGER_NGINX_CONFIG_TEMPLATE "/srv/www/nginx.conf.erb"
+
 #COPY . /home/ubuntu/workspace
 #COPY . /root
-
-# 
-RUN rm -rf /srv/www
-RUN mkdir -p /srv/www
-WORKDIR /srv/www
 
 #RUN chown -R www-data:www-data /srv/www
 #CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
