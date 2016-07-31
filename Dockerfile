@@ -9,7 +9,8 @@ COPY ./motd /etc/
 # TEMP until in repo
 # install server50
 COPY ./server50_1.0.0_amd64.deb /tmp
-RUN apt-get update && (dpkg -i /tmp/server50_1.0.0_amd64.deb || true) && apt-get install -f -y && dpkg -i /tmp/server50_1.0.0_amd64.deb
+RUN apt-get update && (dpkg -i /tmp/server50_1.0.0_amd64.deb || true) && apt-get install -f -y
+RUN rm -f /tmp/server50_1.0.0_amd64.deb
 
 #COPY . /home/ubuntu/workspace
 #COPY . /root

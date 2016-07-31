@@ -1,15 +1,14 @@
 default: run
 
 build:
+	cp -f ../server50/server50_1.0.0_amd64.deb .
 	docker build -t cs50/server .
 
 rebuild:
 	docker build --no-cache -t cs50/server .
 
 run:
-	#docker run -i --name server50 --rm -v "$(PWD)"/bin:/opt/cs50/server50/bin -v "$(PWD)"/etc:/etc/server50 -t cs50/server
 	docker run -i --name server50 -p 8080:8080 --rm -v "$(PWD)"/apps:/root -t cs50/server
 
 shell:
-	#docker run -i --name server50 -p 8080:8080 --rm -t cs50/server
-	docker exec -it server50 bash
+	docker exec -it server50 bash -l

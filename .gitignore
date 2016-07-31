@@ -2,3 +2,4 @@
 !.gitignore
 *.deb
 *.pyc
+__pycache__/
