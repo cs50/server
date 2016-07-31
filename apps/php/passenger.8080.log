@@ -1,0 +1,27 @@
+[ 2016-07-31 04:59:16.0969 36/7fe096428780 age/Wat/WatchdogMain.cpp:1291 ]: Starting Passenger watchdog...
+[ 2016-07-31 04:59:16.3167 99/7fdffaeaf780 age/Cor/CoreMain.cpp:982 ]: Starting Passenger core...
+[ 2016-07-31 04:59:16.3171 99/7fdffaeaf780 age/Cor/CoreMain.cpp:235 ]: Passenger core running in multi-application mode.
+[ 2016-07-31 04:59:16.3188 99/7fdffaeaf780 age/Cor/CoreMain.cpp:732 ]: Passenger core online, PID 99
+[ 2016-07-31 04:59:16.3248 104/7f37f22eb780 age/Ust/UstRouterMain.cpp:529 ]: Starting Passenger UstRouter...
+[ 2016-07-31 04:59:16.3257 104/7f37f22eb780 age/Ust/UstRouterMain.cpp:342 ]: Passenger UstRouter online, PID 104
+
+
+[ 2016-07-31 04:59:36.0795 104/7f37ebfff700 age/Ust/UstRouterMain.cpp:422 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ 2016-07-31 04:59:36.0798 99/7fdff8e59700 age/Cor/CoreMain.cpp:532 ]: Signal received. Gracefully shutting down... (send signal 2 more time(s) to force shutdown)
+[ 2016-07-31 04:59:36.0806 99/7fdffaeaf780 age/Cor/CoreMain.cpp:901 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ 2016-07-31 04:59:36.0802 104/7f37f22eb780 age/Ust/UstRouterMain.cpp:492 ]: Received command to shutdown gracefully. Waiting until all clients have disconnected...
+[ 2016-07-31 04:59:36.0810 99/7fdff8e59700 Ser/Server.h:817 ]: [ServerThr.1] Freed 128 spare client objects
+[ 2016-07-31 04:59:36.0817 99/7fdff8e59700 Ser/Server.h:464 ]: [ServerThr.1] Shutdown finished
+[ 2016-07-31 04:59:36.0811 99/7fdfe2ffd700 Ser/Server.h:817 ]: [ServerThr.4] Freed 128 spare client objects
+[ 2016-07-31 04:59:36.0822 99/7fdfe2ffd700 Ser/Server.h:464 ]: [ServerThr.4] Shutdown finished
+[ 2016-07-31 04:59:36.0812 99/7fdfe37fe700 Ser/Server.h:817 ]: [ServerThr.3] Freed 128 spare client objects
+[ 2016-07-31 04:59:36.0829 99/7fdfe37fe700 Ser/Server.h:464 ]: [ServerThr.3] Shutdown finished
+[ 2016-07-31 04:59:36.0812 99/7fdfe3fff700 Ser/Server.h:817 ]: [ServerThr.2] Freed 128 spare client objects
+[ 2016-07-31 04:59:36.0835 99/7fdfe3fff700 Ser/Server.h:464 ]: [ServerThr.2] Shutdown finished
+[ 2016-07-31 04:59:36.0813 99/7fdfe27fc700 Ser/Server.h:817 ]: [ApiServer] Freed 0 spare client objects
+[ 2016-07-31 04:59:36.0844 99/7fdfe27fc700 Ser/Server.h:464 ]: [ApiServer] Shutdown finished
+[ 2016-07-31 04:59:36.0814 104/7f37eb7fe700 Ser/Server.h:817 ]: [UstRouterApiServer] Freed 0 spare client objects
+[ 2016-07-31 04:59:36.0851 104/7f37eb7fe700 Ser/Server.h:464 ]: [UstRouterApiServer] Shutdown finished
+[ 2016-07-31 04:59:36.0814 104/7f37ebfff700 Ser/Server.h:464 ]: [UstRouter] Shutdown finished
+[ 2016-07-31 04:59:36.0863 104/7f37f22eb780 age/Ust/UstRouterMain.cpp:523 ]: Passenger UstRouter shutdown finished
+[ 2016-07-31 04:59:36.1614 99/7fdffaeaf780 age/Cor/CoreMain.cpp:967 ]: Passenger core shutdown finished
