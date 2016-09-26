@@ -6,9 +6,6 @@ WORKDIR /srv/www
 # default port (to match Cloud9)
 EXPOSE 8080
 
-# override CS50 CLI's MOTD
-COPY ./motd /etc/
-
 # TEMP until in repo
 # install server50
 COPY ./server50_1.0.0_amd64.deb /tmp
