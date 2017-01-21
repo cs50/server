@@ -35,10 +35,6 @@ http {
     # Learn more at:
     # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
-    # TODO: remove as unneeded?
-    # simplify access_log
-    log_format server50 '$request';
-
     # determine real scheme
     # http://stackoverflow.com/a/21911864
     map $http_x_forwarded_proto $real_scheme {
@@ -57,6 +53,9 @@ http {
 
     # suppress Server header
     server_tokens off;
+
+    # include files matching the specified mask
+    include /usr/local/etc/*.conf;
 
     ### END your own configuration options ###
 
@@ -104,10 +103,6 @@ http {
         if ($http_x_forwarded_proto = 'http') {
             return 301 https://$host$request_uri;
         }
-
-        # TODO: remove as unneeded?
-        # log all HTTP requests (to Passenger's console)
-        #access_log '<%= @options[:log_file] %>' server50;
 
         # TODO: make index.php conditional on Passenger's mode
         # look for index.php then index.html
