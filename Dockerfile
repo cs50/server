@@ -4,26 +4,34 @@ FROM cs50/cli
 EXPOSE 8080
 
 # install packages
-# https://www.phusionpassenger.com/library/walkthroughs/deploy/python/ownserver/nginx/oss/trusty/install_passenger.html
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https ca-certificates && \
-    sh -c "echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list" && \
-    apt-get update && \
+#nginx-extras \
+RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
-        nginx-extras \
+        libcurl4-openssl-dev \
+        libpcre3-dev \
         nodejs \
-        passenger \
+        php5-fpm \
         php5-mcrypt \
         php5-memcached \
         php5-mysql \
         php5-xdebug
+RUN gem install passenger # TODO: document why
 
-# override MOTD
+# download any necessary files immediately, which would otherwise be downloading during the first run
+RUN passenger-config install-standalone-runtime && \
+    passenger-config build-native-support
+
+# configure server
+COPY ./sbin/* /usr/local/sbin/
+RUN chmod a+rx /usr/local/sbin/*
+COPY ./etc/* /usr/local/etc/
+RUN chmod a+r /usr/local/etc/*
+#RUN sed -E -i 's#\# (include /etc/nginx/passenger.conf;)#\1#' /etc/nginx/nginx.conf
 RUN echo "This is CS50 Server." > /etc/motd
 
 # install app
-ONBUILD COPY . /srv/www
+ONBUILD COPY . /var/www
 
 # start server
-WORKDIR /srv/www
+WORKDIR /var/www
 CMD ["passenger", "start"]

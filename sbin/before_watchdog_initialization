@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# inject environment variables into pool, since PHP 5.5.9 (on Ubuntu 14.04) doesn't support `clear_env = no`
+sed -i '/^env\[.\+\] *=.*/d' /etc/php5/fpm/pool.d/www.conf
+env | grep -v ^PASSENGER_ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024' >> /etc/php5/fpm/pool.d/www.conf
+
+# check for development mode
+if [ "$APPLICATION_ENV" == "dev" ]; then
+    php5enmod xdebug && \
+    cp -f /usr/share/php5/php.ini-development /etc/php5/fpm/php.ini
+else
+    php5dismod xdebug && \
+    cp -f /usr/share/php5/php.ini-production /etc/php5/fpm/php.ini
+fi
+
+# start PHP-FPM
+/etc/init.d/php5-fpm start
