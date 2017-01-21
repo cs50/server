@@ -6,11 +6,9 @@ env | grep -v ^PASSENGER_ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'len
 
 # enable Xdebug (and other PHP-recommended directives) in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    php5enmod xdebug && \
-    cp -f /usr/share/php5/php.ini-development /etc/php5/fpm/php.ini
+    php5enmod xdebug && cp -f /usr/share/php5/php.ini-development /etc/php5/fpm/php.ini
 else
-    php5dismod xdebug && \
-    cp -f /usr/share/php5/php.ini-production /etc/php5/fpm/php.ini
+    php5dismod xdebug && cp -f /usr/share/php5/php.ini-production /etc/php5/fpm/php.ini
 fi
 
 # start PHP-FPM

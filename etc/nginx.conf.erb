@@ -35,6 +35,7 @@ http {
     # Learn more at:
     # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
+    # TODO: remove as unneeded?
     # simplify access_log
     log_format server50 '$request';
 
@@ -104,17 +105,13 @@ http {
             return 301 https://$host$request_uri;
         }
 
+        # TODO: remove as unneeded?
         # log all HTTP requests (to Passenger's console)
-        access_log '<%= @options[:log_file] %>' server50;
+        #access_log '<%= @options[:log_file] %>' server50;
 
         # TODO: make index.php conditional on Passenger's mode
         # look for index.php then index.html
         index index.php index.html;
-
-        # static files, directories
-        #location / { 
-        #    try_files $uri $uri/ /index.html =404;
-        #}
 
         # enable PHP-FPM
         location ~ \.php$ {
