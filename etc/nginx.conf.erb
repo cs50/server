@@ -107,8 +107,14 @@ http {
         # log all HTTP requests (to Passenger's console)
         access_log '<%= @options[:log_file] %>' server50;
 
+        # TODO: make index.php conditional on Passenger's mode
         # look for index.php then index.html
         index index.php index.html;
+
+        # static files, directories
+        #location / { 
+        #    try_files $uri $uri/ /index.html =404;
+        #}
 
         # enable PHP-FPM
         location ~ \.php$ {

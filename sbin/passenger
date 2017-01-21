@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#PASSENGER_NODEJS=/usr/bin/nodejs \
-
+# configure Passenger as CS50 Server
+# https://www.phusionpassenger.com/library/config/standalone/reference/
 PASSENGER_LOG_FILE=/var/log/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \

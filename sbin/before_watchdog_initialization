@@ -4,7 +4,7 @@
 sed -i '/^env\[.\+\] *=.*/d' /etc/php5/fpm/pool.d/www.conf
 env | grep -v ^PASSENGER_ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024' >> /etc/php5/fpm/pool.d/www.conf
 
-# check for development mode
+# enable Xdebug (and other PHP-recommended directives) in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
     php5enmod xdebug && \
     cp -f /usr/share/php5/php.ini-development /etc/php5/fpm/php.ini
