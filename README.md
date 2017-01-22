@@ -1,3 +1,1 @@
-# TODO
-
-* Suppress `Server` header with `.ebextensions`?
+# CS50 Server
