@@ -54,9 +54,10 @@ http {
     # suppress Server header
     server_tokens off;
 
-    <% if File.file?('/usr/local/etc/http.conf') %>
+    <% if File.file?('/var/www/http.conf') %>
+    # TODO: avoid hardcoding /var/www
     # http context
-    include /usr/local/etc/http.conf;
+    include /var/www/http.conf;
     <% end %>
 
     ### END your own configuration options ###
@@ -122,9 +123,10 @@ http {
             try_files $uri =404;
         }
 
-        <% if File.file?('/usr/local/etc/server.conf') %>
+        <% if File.file?('/var/www/server.conf') %>
+        # TODO: avoid hardcoding /var/www
         # server context
-        include /usr/local/etc/server.conf;
+        include /var/www/server.conf;
         <% end %>
 
         ### END your own configuration options ###
