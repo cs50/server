@@ -2,7 +2,7 @@
 
 # restart application after every request in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    mkdir tmp && touch tmp/always_restart.txt
+    mkdir -p tmp && touch tmp/always_restart.txt
 fi
 
 # configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
@@ -15,5 +15,5 @@ PASSENGER_PYTHON=/usr/bin/python3 \
 
 # remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    rm tmp/always_restart.txt && rmdir tmp
+    rm -f tmp/always_restart.txt && rmdir -p tmp
 fi
