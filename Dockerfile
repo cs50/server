@@ -1,5 +1,8 @@
 FROM cs50/cli
 
+# environment
+ENV FLASK_APP application.py
+
 # default port (to match CS50 IDE)
 EXPOSE 8080
 
