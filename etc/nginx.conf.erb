@@ -42,11 +42,12 @@ http {
         '' $scheme;
     }
 
-    # before Passenger starts
-    passenger_ctl hook_before_watchdog_initialization /usr/local/sbin/before_watchdog_initialization;
-
-    # after Passenger stops
-    passenger_ctl hook_after_watchdog_shutdown /usr/local/sbin/after_watchdog_shutdown;
+    <% if !AppFinder.looks_like_app_directory? @apps[0][:root] %>
+    # assume PHP if autodetection fails
+    # https://www.phusionpassenger.com/library/indepth/nodejs/app_autodetection/standalone/#autodetection-algorithm
+    passenger_ctl hook_before_watchdog_initialization /usr/local/sbin/before_watchdog_initialization; # before Passenger starts
+    passenger_ctl hook_after_watchdog_shutdown /usr/local/sbin/after_watchdog_shutdown; # after Passenger stops
+    <% end %>
 
     # suppress Passenger's version
     passenger_show_version_in_header off;
@@ -54,11 +55,9 @@ http {
     # suppress Server header
     server_tokens off;
 
-    <% for app in @apps %>
-    <% if File.file?("#{app[:root]}/http.conf") %>
+    <% if File.file?("#{@apps[0][:root]}/http.conf") %>
     # http context
-    include <%= "#{app[:root]}/http.conf" %>;
-    <% end %>
+    include <%= "#{@apps[0][:root]}/http.conf" %>;
     <% end %>
 
     ### END your own configuration options ###
@@ -86,7 +85,7 @@ http {
         }
     <% end %>
 
-    <% for app in @apps %>
+    <% for app in @apps[0,1] %>
     server {
         <%= include_passenger_internal_template('server.erb', 8, true, binding) %>
         <%= include_passenger_internal_template('rails_asset_pipeline.erb', 8, false) %>
@@ -108,11 +107,10 @@ http {
             return 301 https://$host$request_uri;
         }
 
-        # TODO: make index.php conditional on Passenger's mode
-        # look for index.php then index.html
-        index index.php index.html;
-
-        # enable PHP-FPM
+        <% if !AppFinder.looks_like_app_directory? @apps[0][:root] %>
+        # assume PHP if autodetection fails
+        # https://www.phusionpassenger.com/library/indepth/nodejs/app_autodetection/standalone/#autodetection-algorithm
+        index index.html index.php;
         location ~ \.php$ {
             fastcgi_param HTTP_X_FORWARDED_HOST $host;
             fastcgi_param HTTP_X_FORWARDED_SERVER $host;
@@ -123,15 +121,16 @@ http {
             include /usr/local/etc/fastcgi_params;
             try_files $uri =404;
         }
+        <% end %>
 
-        <% if File.file?("#{app[:root]}/server.conf") %>
+        <% if File.file?("#{@apps[0][:root]}/server.conf") %>
         # server context
-        include <%= "#{app[:root]}/server.conf" %>;
+        include <%= "#{@apps[0][:root]}/server.conf" %>;
         <% end %>
 
         ### END your own configuration options ###
     }
-    passenger_pre_start <%= listen_url(app) %>;
+    passenger_pre_start <%= listen_url(@apps[0]) %>;
     <% end %>
 
     <%= include_passenger_internal_template('footer.erb', 4) %>
