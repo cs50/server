@@ -1,1 +1,1 @@
-from hello import app as application
+from application import app as application
