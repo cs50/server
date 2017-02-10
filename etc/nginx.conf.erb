@@ -54,10 +54,11 @@ http {
     # suppress Server header
     server_tokens off;
 
-    <% if File.file?('/var/www/http.conf') %>
-    # TODO: avoid hardcoding /var/www
+    <% for app in @apps %>
+    <% if File.file?("#{app[:root]}/http.conf") %>
     # http context
-    include /var/www/http.conf;
+    include <%= "#{app[:root]}/http.conf" %>;
+    <% end %>
     <% end %>
 
     ### END your own configuration options ###
@@ -123,10 +124,9 @@ http {
             try_files $uri =404;
         }
 
-        <% if File.file?('/var/www/server.conf') %>
-        # TODO: avoid hardcoding /var/www
+        <% if File.file?("#{app[:root]}/server.conf") %>
         # server context
-        include /var/www/server.conf;
+        include <%= "#{app[:root]}/server.conf" %>;
         <% end %>
 
         ### END your own configuration options ###
