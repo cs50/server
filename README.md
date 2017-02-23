@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Usage
 
 |File|Inferred application type
