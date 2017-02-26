@@ -10,8 +10,8 @@ PASSENGER_LOG_FILE=/var/log/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
-PASSENGER_PYTHON=/usr/bin/python3 \
-/usr/local/bin/passenger "$@"
+PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
+/opt/rbenv/shims/passenger "$@"
 
 # remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then

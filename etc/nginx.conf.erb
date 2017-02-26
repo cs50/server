@@ -45,8 +45,8 @@ http {
     <% if !AppFinder.looks_like_app_directory? @apps[0][:root] %>
     # assume PHP if autodetection fails
     # https://www.phusionpassenger.com/library/indepth/nodejs/app_autodetection/standalone/#autodetection-algorithm
-    passenger_ctl hook_before_watchdog_initialization /usr/local/sbin/before_watchdog_initialization; # before Passenger starts
-    passenger_ctl hook_after_watchdog_shutdown /usr/local/sbin/after_watchdog_shutdown; # after Passenger stops
+    passenger_ctl hook_before_watchdog_initialization /usr/local/bin/before_watchdog_initialization; # before Passenger starts
+    passenger_ctl hook_after_watchdog_shutdown /usr/local/bin/after_watchdog_shutdown; # after Passenger stops
     <% end %>
 
     # suppress Passenger's version

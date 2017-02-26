@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # stop PHP-FPM
-/etc/init.d/php5-fpm stop
+/etc/init.d/php7.1-fpm stop

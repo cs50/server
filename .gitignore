@@ -1,4 +1,6 @@
 .*
 !.gitignore
+*.lock
+*.log
 *.pyc
 __pycache__/
