@@ -2,6 +2,7 @@ FROM cs50/cli
 
 # environment
 ENV FLASK_APP application.py
+ENV PYTHONDONTWRITEBYTECODE ""
 
 # default port (to match CS50 IDE)
 EXPOSE 8080
@@ -39,4 +40,4 @@ ONBUILD COPY . /srv/www
 
 # start server within /srv/www
 WORKDIR /srv/www
-CMD ["passenger", "start"]
+CMD unset PYTHONDONTWRITEBYTECODE && passenger start
