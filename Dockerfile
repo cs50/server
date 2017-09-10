@@ -15,7 +15,7 @@ RUN apt-get update && \
         php-memcached \
         php-mysql \
         php-xdebug
-RUN pip3 install Django Flask Flask-JSGlue Flask-Session SQLAlchemy virtualenv
+RUN pip3 install Django Flask Flask-JSGlue Flask-Session raven[flask] SQLAlchemy virtualenv
 
 # install Passenger via gem, per https://www.phusionpassenger.com/library/install/standalone/install/oss/rubygems_norvm/,
 # rather than apt-get, per https://www.phusionpassenger.com/library/install/standalone/install/oss/trusty/,
