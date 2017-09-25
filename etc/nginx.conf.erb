@@ -99,8 +99,7 @@ http {
 
         # disable caching
         # https://stackoverflow.com/a/2068407/5156190
-        add_header Cache-Control "no-cache, no-store, must-revalidate";
-        expires 0;
+        add_header Cache-Control "private, max-age=0, no-store";
 
         # redirect directory to directory/ (but with real scheme)
         if (-d $request_filename) {

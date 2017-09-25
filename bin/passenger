@@ -16,6 +16,7 @@ PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
+PASSENGER_TURBOCACHING=false \
 /opt/rbenv/shims/passenger "$@"
 
 # remove tmp/always_restart.txt in development mode
