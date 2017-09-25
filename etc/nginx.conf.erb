@@ -97,6 +97,10 @@ http {
         # Learn more at:
         # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
+        # disable caching
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+        expires 0;
+
         # redirect directory to directory/ (but with real scheme)
         if (-d $request_filename) {
             rewrite [^/]$ $real_scheme://$http_host$uri/ permanent;
