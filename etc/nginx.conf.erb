@@ -145,4 +145,8 @@ http {
     <% end %>
 
     <%= include_passenger_internal_template('footer.erb', 4) %>
+
+    <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
+        port_in_redirect off;
+    <% end %>
 }
