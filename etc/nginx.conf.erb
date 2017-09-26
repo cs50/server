@@ -109,9 +109,14 @@ http {
         }
 
         # redirect to HTTPS if behind load balancer
-        if ($http_x_forwarded_proto = 'http') {
-            return 301 https://$host$request_uri;
+        if ($http_x_forwarded_proto != 'https') {
+            rewrite ^ https://$host$request_uri? permanent;
         }
+
+        # omit port from rewrites in server.conf 
+        <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
+        port_in_redirect off;
+        <% end %>
 
         <% if !AppFinder.looks_like_app_directory? @apps[0][:root] %>
         # assume PHP if autodetection fails
