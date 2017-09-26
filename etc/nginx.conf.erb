@@ -109,8 +109,8 @@ http {
         }
 
         # redirect to HTTPS if behind load balancer
-        if ($http_x_forwarded_proto != 'https') {
-            rewrite ^ https://$host$request_uri? permanent;
+        if ($http_x_forwarded_proto = 'http') {
+            return 301 https://$host$request_uri;
         }
 
         # omit port from rewrites in server.conf 
