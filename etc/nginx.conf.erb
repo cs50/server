@@ -42,9 +42,9 @@ http {
         '' $scheme;
     }
 
-    <% if !AppFinder::STARTUP_FILES.any? do |file| File.exist?("#{@apps[0][:root]}/#{file}") end %>
+    <% if !@apps[0][:app_type] && !AppFinder::STARTUP_FILES.any? do |file| File.exist?("#{@apps[0][:root]}/#{file}") end %>
     # assume PHP if autodetection fails
-    # https://www.phusionpassenger.com/library/indepth/nodejs/app_autodetection/standalone/#autodetection-algorithm
+    # https://www.phusionpassenger.com/library/indepth/ruby/app_autodetection/standalone/
     passenger_ctl hook_before_watchdog_initialization /usr/local/bin/before_watchdog_initialization; # before Passenger starts
     passenger_ctl hook_after_watchdog_shutdown /usr/local/bin/after_watchdog_shutdown; # after Passenger stops
     <% end %>
@@ -118,9 +118,9 @@ http {
         port_in_redirect off;
         <% end %>
 
-        <% if !AppFinder::STARTUP_FILES.any? do |file| File.exist?("#{@apps[0][:root]}/#{file}") end %>
+        <% if !app[:app_type] && !AppFinder::STARTUP_FILES.any? do |file| File.exist?("#{@apps[0][:root]}/#{file}") end %>
         # assume PHP if autodetection fails
-        # https://www.phusionpassenger.com/library/indepth/nodejs/app_autodetection/standalone/#autodetection-algorithm
+        # https://www.phusionpassenger.com/library/indepth/ruby/app_autodetection/standalone/
         index index.html index.php;
         location ~ \.php$ {
             fastcgi_param HTTP_X_FORWARDED_HOST $host;
