@@ -1,12 +1,13 @@
-FROM cs50/cli
+FROM cs50/baseimage:ubuntu
+USER root
 
-# environment
-ENV FLASK_APP application.py
+# Set FLASK_APP
+RUN echo FLASK_APP=application.py >> /etc/environment
 
-# default port (to match CS50 IDE)
+# Default port (to match CS50 IDE)
 EXPOSE 8080
 
-# packages 
+# Packages 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
@@ -17,26 +18,26 @@ RUN apt-get update && \
         php-xdebug
 RUN pip3 install Django Flask Flask-JSGlue Flask-Session raven[flask] SQLAlchemy virtualenv
 
-# install Passenger via gem, per https://www.phusionpassenger.com/library/install/standalone/install/oss/rubygems_norvm/,
+# Install Passenger via gem, per https://www.phusionpassenger.com/library/install/standalone/install/oss/rubygems_norvm/,
 # rather than apt-get, per https://www.phusionpassenger.com/library/install/standalone/install/oss/trusty/,
 # else a version of nginx (compiled without ngx_http_fastcgi_module) gets installed from Passenger's repo, which yields:
 # unknown directive "fastcgi_param" in nginx.conf
 RUN gem install passenger -v 5.1.11
 
-# download any necessary files immediately, which would otherwise be downloading during the first run
+# Download any necessary files immediately, which would otherwise be downloading during the first run
 RUN passenger-config install-standalone-runtime && \
     passenger-config build-native-support
 
-# install server's own config files
+# Install server's own config files
 COPY ./bin/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/*
 COPY ./etc/* /usr/local/etc/
 RUN chmod a+r /usr/local/etc/*
 RUN echo "This is CS50 Server." > /etc/motd
 
-# when child image is built from this one, copy its files into /srv/www
-ONBUILD COPY . /srv/www
+# When child image is built from this one, copy its files into workspace
+USER ubuntu
+ONBUILD COPY . /home/ubuntu/workspace/
 
-# start server within /srv/www
-WORKDIR /srv/www
+# Start server within /srv/www
 CMD unset PYTHONDONTWRITEBYTECODE && passenger start
