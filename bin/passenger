@@ -1,25 +1,30 @@
 #!/bin/bash
 
-# default to production mode
+# Default to production mode
 PASSENGER_ENVIRONMENT="production"
 
-# restart application after every request in development mode
+# Make log/, tmp/pids/
+mkdir -p log && mkdir -p tmp/pids
+
+# Restart application after every request in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    mkdir -p tmp && touch tmp/always_restart.txt
+    touch tmp/always_restart.txt
     PASSENGER_ENVIRONMENT="development"
 fi
 
-# configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
+# Configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
 PASSENGER_ENVIRONMENT="$PASSENGER_ENVIRONMENT" \
-PASSENGER_LOG_FILE=/var/log/passenger.log \
+PASSENGER_LOG_FILE=log/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
-PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
 PASSENGER_TURBOCACHING=false \
 /opt/rbenv/shims/passenger "$@"
 
-# remove tmp/always_restart.txt in development mode
+# Remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    rm -f tmp/always_restart.txt && rmdir -p tmp
+    rm -f tmp/always_restart.txt
 fi
+
+# Remove tmp/pids
+rm -f tmp/pids/passenger.*.pid && rm -f tmp/pids/passenger.*.pid.lock && rmdir tmp/pids && rmdir tmp

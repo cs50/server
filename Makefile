@@ -7,7 +7,7 @@ rebuild:
 	docker build --no-cache -t cs50/server .
 
 run:
-	docker run -i --name server -p 8080:8080 --rm -v "$(PWD)"/examples:/srv/www -t cs50/server bash -l
+	docker run -i --name server -p 8080:8080 --rm -v "$(PWD)"/examples:/home/ubuntu/workspace -t cs50/server bash -l
 
 shell:
 	docker exec -it server bash -l
