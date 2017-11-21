@@ -8,7 +8,8 @@ RUN echo FLASK_APP=application.py >> /etc/environment
 EXPOSE 8080
 
 # Packages 
-RUN apt-get update && \
+RUN add-apt-repository -y ppa:ondrej/php && \
+    apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
         libpcre3-dev `# required by passenger-config` \
