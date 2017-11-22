@@ -28,12 +28,14 @@ touch /var/log/passenger.log && chown www-data:www-data /var/log/passenger.log &
 
 # Configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
 PASSENGER_ENVIRONMENT="$PASSENGER_ENVIRONMENT" \
+PASSENGER_GROUP=www-data \
 PASSENGER_LOG_FILE=/var/log/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
 PASSENGER_TURBOCACHING=false \
+PASSENGER_USER=www-data \
 /opt/rbenv/shims/passenger "$@"
 
 # Remove tmp/always_restart.txt in development mode

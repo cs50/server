@@ -40,4 +40,4 @@ ONBUILD RUN chown -R www-data:www-data /var/www
 WORKDIR /var/www
 
 # Start server within /srv/www
-CMD ["passenger", "start", "--user", "www-data"]
+CMD ["passenger", "start"]
