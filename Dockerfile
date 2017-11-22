@@ -1,15 +1,14 @@
-FROM cs50/cli:ubuntu
+FROM cs50/baseimage:ubuntu
 USER root
 
 # Set FLASK_APP
-RUN echo FLASK_APP=application.py >> /etc/environment
+RUN echo "FLASK_APP='application.py'" >> /etc/environment
 
 # Default port (to match CS50 IDE)
 EXPOSE 8080
 
 # Packages 
-RUN add-apt-repository -y ppa:ondrej/php && \
-    apt-get update && \
+RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
         libpcre3-dev `# required by passenger-config` \
@@ -34,7 +33,6 @@ COPY ./bin/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/*
 COPY ./etc/* /usr/local/etc/
 RUN chmod a+r /usr/local/etc/*
-RUN echo "This is CS50 Server." > /etc/motd
 
 # When child image is built from this one, copy its files into image
 ONBUILD COPY . /var/www/
@@ -42,4 +40,4 @@ ONBUILD RUN chown -R www-data:www-data /var/www
 WORKDIR /var/www
 
 # Start server within /srv/www
-CMD unset PYTHONDONTWRITEBYTECODE && passenger start --user www-data
+CMD ["passenger", "start", "--user", "www-data"]
