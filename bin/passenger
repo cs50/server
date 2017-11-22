@@ -1,21 +1,36 @@
 #!/bin/bash
 
+# Inject environment variables into pool
+sed -i '/^env\[.\+\] *=.*/d' /etc/php/7.1/fpm/pool.d/www.conf
+env | grep -v ^PASSENGER_ | grep -v =$ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024' >> /etc/php/7.1/fpm/pool.d/www.conf
+
+# Enable Xdebug (and other PHP-recommended directives) in development mode
+if [ "$APPLICATION_ENV" == "dev" ]; then
+    phpenmod xdebug && cp -f /usr/lib/php/7.1/php.ini-development /etc/php/7.1/fpm/php.ini
+else
+    phpdismod xdebug && cp -f /usr/lib/php/7.1/php.ini-production /etc/php/7.1/fpm/php.ini
+fi
+
+# Start PHP-FPM
+/etc/init.d/php7.1-fpm start
+
 # Default to production mode
 PASSENGER_ENVIRONMENT="production"
 
-# Make log/, tmp/pids/
-mkdir -p log && mkdir -p tmp/pids
-
 # Restart application after every request in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    touch tmp/always_restart.txt
+    mkdir tmp && touch tmp/always_restart.txt
     PASSENGER_ENVIRONMENT="development"
 fi
 
+# Until https://github.com/phusion/passenger/issues/1990 is released in > 5.1.11
+touch /tmp/passenger.log && chown www-data:www-data /tmp/passenger.log
+
 # Configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
 PASSENGER_ENVIRONMENT="$PASSENGER_ENVIRONMENT" \
-PASSENGER_LOG_FILE=log/passenger.log \
+PASSENGER_LOG_FILE=/tmp/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
+PASSENGER_PID_FILE=/tmp/passenger.pid \
 PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
 PASSENGER_TURBOCACHING=false \
@@ -26,5 +41,5 @@ if [ "$APPLICATION_ENV" == "dev" ]; then
     rm -f tmp/always_restart.txt
 fi
 
-# Remove tmp/pids
-rm -f tmp/pids/passenger.*.pid && rm -f tmp/pids/passenger.*.pid.lock && rmdir tmp/pids && rmdir tmp
+# Stop PHP-FPM
+/etc/init.d/php7.1-fpm stop

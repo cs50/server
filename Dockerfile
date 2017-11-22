@@ -36,9 +36,10 @@ COPY ./etc/* /usr/local/etc/
 RUN chmod a+r /usr/local/etc/*
 RUN echo "This is CS50 Server." > /etc/motd
 
-# When child image is built from this one, copy its files into workspace
-USER ubuntu
-ONBUILD COPY . /home/ubuntu/workspace/
+# When child image is built from this one, copy its files into image
+ONBUILD COPY . /var/www/
+ONBUILD RUN chown -R www-data:www-data /var/www
+WORKDIR /var/www
 
 # Start server within /srv/www
-CMD unset PYTHONDONTWRITEBYTECODE && passenger start
+CMD unset PYTHONDONTWRITEBYTECODE && passenger start --user www-data
