@@ -35,17 +35,17 @@ http {
     # Learn more at:
     # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
-    # determine real scheme
+    # Determine real scheme
     # http://stackoverflow.com/a/21911864
     map $http_x_forwarded_proto $real_scheme {
         default $http_x_forwarded_proto;
         '' $scheme;
     }
 
-    # suppress Passenger's version
+    # Suppress Passenger's version
     passenger_show_version_in_header off;
 
-    # suppress Server header
+    # Suppress Server header
     server_tokens off;
 
     <% if File.file?("#{@apps[0][:root]}/http.conf") %>
@@ -90,29 +90,29 @@ http {
         # Learn more at:
         # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
-        # disable caching
+        # Disable caching
         # https://stackoverflow.com/a/2068407/5156190
         add_header Cache-Control "no-cache, no-store, must-revalidate";
         add_header Pragma "no-cache";
         add_header Expires "0";
 
-        # redirect directory to directory/ (but with real scheme)
+        # Redirect directory to directory/ (but with real scheme)
         if (-d $request_filename) {
             rewrite [^/]$ $real_scheme://$http_host$uri/ permanent;
         }
 
-        # redirect to HTTPS if behind load balancer
+        # Redirect to HTTPS if behind load balancer
         if ($http_x_forwarded_proto = 'http') {
             return 301 https://$host$request_uri;
         }
 
-        # omit port from rewrites in server.conf 
+        # Omit port from rewrites in server.conf 
         <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
         port_in_redirect off;
         <% end %>
 
         <% if !app[:app_type] && !AppFinder::STARTUP_FILES.any? do |file| File.exist?("#{@apps[0][:root]}/#{file}") end %>
-        # assume PHP if autodetection fails
+        # Assume PHP if autodetection fails
         # https://www.phusionpassenger.com/library/indepth/ruby/app_autodetection/standalone/
         index index.html index.php;
         location ~ \.php$ {
