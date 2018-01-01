@@ -1,25 +1,47 @@
 #!/bin/bash
 
-# default to production mode
+# Inject environment variables into pool
+sed -i '/^env\[.\+\] *=.*/d' /etc/php/7.1/fpm/pool.d/www.conf
+env | grep -v ^PASSENGER_ | grep -v =$ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024' >> /etc/php/7.1/fpm/pool.d/www.conf
+
+# Enable Xdebug (and other PHP-recommended directives) in development mode
+if [ "$APPLICATION_ENV" == "dev" ]; then
+    phpenmod xdebug && cp -f /usr/lib/php/7.1/php.ini-development /etc/php/7.1/fpm/php.ini
+else
+    phpdismod xdebug && cp -f /usr/lib/php/7.1/php.ini-production /etc/php/7.1/fpm/php.ini
+fi
+
+# Start PHP-FPM
+/etc/init.d/php7.1-fpm start
+
+# Default to production mode
 PASSENGER_ENVIRONMENT="production"
 
-# restart application after every request in development mode
+# Restart application after every request in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    mkdir -p tmp && touch tmp/always_restart.txt
+    mkdir tmp && touch tmp/always_restart.txt
     PASSENGER_ENVIRONMENT="development"
 fi
 
-# configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
+# Until https://github.com/phusion/passenger/issues/1990 is released in > 5.1.11
+touch /var/log/passenger.log && chown www-data:www-data /var/log/passenger.log && chmod 0660 /var/log/passenger.log
+
+# Configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
 PASSENGER_ENVIRONMENT="$PASSENGER_ENVIRONMENT" \
+PASSENGER_GROUP=www-data \
 PASSENGER_LOG_FILE=/var/log/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
 PASSENGER_TURBOCACHING=false \
+PASSENGER_USER=www-data \
 /opt/rbenv/shims/passenger "$@"
 
-# remove tmp/always_restart.txt in development mode
+# Remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    rm -f tmp/always_restart.txt && rmdir -p tmp
+    rm -f tmp/always_restart.txt
 fi
+
+# Stop PHP-FPM
+/etc/init.d/php7.1-fpm stop

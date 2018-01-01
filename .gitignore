@@ -1,7 +1,8 @@
 .*
 !.gitignore
-!.travis.yml
 *.lock
 *.log
 *.pyc
+!.travis.yml
+examples/*/log/
 __pycache__/
