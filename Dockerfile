@@ -33,11 +33,12 @@ COPY ./bin/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/*
 COPY ./etc/* /usr/local/etc/
 RUN chmod a+r /usr/local/etc/*
+RUN echo "This is CS50 Server." > /etc/motd
 
 # When child image is built from this one, copy its files into image
 ONBUILD COPY . /var/www/
 ONBUILD RUN chown -R www-data:www-data /var/www
 WORKDIR /var/www
 
-# Start server within /srv/www
+# Start server within WORKDIR
 CMD ["passenger", "start"]
