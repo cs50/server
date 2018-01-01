@@ -1,4 +1,4 @@
-FROM cs50/cli:ubuntu
+FROM cs50/cli
 USER root
 
 # Set FLASK_APP
