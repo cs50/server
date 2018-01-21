@@ -19,7 +19,7 @@ PASSENGER_ENVIRONMENT="production"
 
 # Restart application after every request in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    mkdir tmp && touch tmp/always_restart.txt
+    mkdir tmp 2> /dev/null && touch tmp/always_restart.txt
     PASSENGER_ENVIRONMENT="development"
 fi
 
