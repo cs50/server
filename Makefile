@@ -1,13 +1,13 @@
 default: run
 
 build:
-	docker build -t cs50/server:ubuntu .
+	docker build -t cs50/server .
 
 rebuild:
-	docker build --no-cache -t cs50/server:ubuntu .
+	docker build --no-cache -t cs50/server .
 
 run:
-	docker run -i --name server -p 8080:8080 --rm -v "$(PWD)"/examples:/var/www -t cs50/server:ubuntu bash -l
+	docker run -i --name server -p 8080:8080 --rm -v "$(PWD)"/examples:/var/www -t cs50/server bash -l
 
 shell:
 	docker exec -it server bash -l
