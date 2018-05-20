@@ -11,6 +11,7 @@ EXPOSE 8080
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
+        libmysqlclient-dev \
         libpcre3-dev `# required by passenger-config` \
         php7.1-fpm \
         php7.1-memcached \
