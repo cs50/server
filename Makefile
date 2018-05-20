@@ -1,13 +1,8 @@
-default: run
+run:
+	docker run -it -P --rm -v "$(PWD)"/examples:/var/www -t cs50/server:bionic bash -l
 
 build:
-	docker build -t cs50/server .
+	docker build -t cs50/server:bionic .
 
 rebuild:
-	docker build --no-cache -t cs50/server .
-
-run:
-	docker run -i --name server -p 8080:8080 --rm -v "$(PWD)"/examples:/var/www -t cs50/server bash -l
-
-shell:
-	docker exec -it server bash -l
+	docker build --no-cache -t cs50/server:bionic .
