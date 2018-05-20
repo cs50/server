@@ -1,22 +1,25 @@
-FROM cs50/cli
+FROM cs50/cli:bionic
 USER root
-
-# Set FLASK_APP
-RUN echo "FLASK_APP='application.py'" >> /etc/environment
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Default port (to match CS50 IDE)
 EXPOSE 8080
 
 # Packages 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
         libpcre3-dev `# required by passenger-config` \
-        php7.1-fpm \
-        php7.1-memcached \
-        php7.1-mysql \
-        php7.1-xdebug
-RUN pip3 install Django Flask Flask-JSGlue Flask-Session raven[flask] SQLAlchemy virtualenv
+        php-fpm \
+        php-memcached \
+        php-mysql \
+        php-xdebug
+RUN pip3 install \
+        Django \
+        Flask-JSGlue \
+        raven[flask] \
+        SQLAlchemy \
+        virtualenv
 
 # Install Passenger via gem, per https://www.phusionpassenger.com/library/install/standalone/install/oss/rubygems_norvm/,
 # rather than apt-get, per https://www.phusionpassenger.com/library/install/standalone/install/oss/trusty/,
@@ -29,8 +32,11 @@ RUN passenger-config install-standalone-runtime && \
     passenger-config build-native-support
 
 # Install server's own config files
-COPY ./bin/* /usr/local/bin/
-RUN chmod a+rx /usr/local/bin/*
+RUN mkdir -p /opt/cs50/bin && \
+    chmod a+rx /opt/cs50 /opt/cs50/bin
+ENV PATH /opt/cs50/bin:"$PATH"
+COPY ./bin/* /opt/cs50/bin/
+RUN chmod a+rx /opt/cs50/bin/*
 COPY ./etc/* /usr/local/etc/
 RUN chmod a+r /usr/local/etc/*
 RUN echo "This is CS50 Server." > /etc/motd

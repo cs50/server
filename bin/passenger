@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Inject environment variables into pool
-sed -i '/^env\[.\+\] *=.*/d' /etc/php/7.1/fpm/pool.d/www.conf
-env | grep -v ^PASSENGER_ | grep -v =$ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024' >> /etc/php/7.1/fpm/pool.d/www.conf
+sed -i '/^env\[.\+\] *=.*/d' /etc/php/7.2/fpm/pool.d/www.conf
+env | grep -v ^PASSENGER_ | grep -v =$ | sed 's/\([^=]\+\)=\(.*\)/env[\1]=\"\2\"/' | awk 'length <= 1024' >> /etc/php/7.2/fpm/pool.d/www.conf
 
 # Enable Xdebug (and other PHP-recommended directives) in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
-    phpenmod xdebug && cp -f /usr/lib/php/7.1/php.ini-development /etc/php/7.1/fpm/php.ini
+    phpenmod xdebug && cp -f /usr/lib/php/7.2/php.ini-development /etc/php/7.2/fpm/php.ini
 else
-    phpdismod xdebug && cp -f /usr/lib/php/7.1/php.ini-production /etc/php/7.1/fpm/php.ini
+    phpdismod xdebug && cp -f /usr/lib/php/7.2/php.ini-production /etc/php/7.2/fpm/php.ini
 fi
 
 # Start PHP-FPM
-/etc/init.d/php7.1-fpm start
+/etc/init.d/php7.2-fpm start
 
 # Default to production mode
 PASSENGER_ENVIRONMENT="production"
@@ -33,10 +33,10 @@ PASSENGER_LOG_FILE=/var/log/passenger.log \
 PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
-PASSENGER_PYTHON=/opt/pyenv/shims/python3.6 \
+PASSENGER_PYTHON=python3 \
 PASSENGER_TURBOCACHING=false \
 PASSENGER_USER=www-data \
-/opt/rbenv/shims/passenger "$@"
+/usr/local/bin/passenger "$@"
 
 # Remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
@@ -44,4 +44,4 @@ if [ "$APPLICATION_ENV" == "dev" ]; then
 fi
 
 # Stop PHP-FPM
-/etc/init.d/php7.1-fpm stop
+/etc/init.d/php7.2-fpm stop
