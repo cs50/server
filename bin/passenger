@@ -23,9 +23,6 @@ if [ "$APPLICATION_ENV" == "dev" ]; then
     PASSENGER_ENVIRONMENT="development"
 fi
 
-# Until https://github.com/phusion/passenger/issues/1990 is released in > 5.1.11
-touch /var/log/passenger.log && chown www-data:www-data /var/log/passenger.log && chmod 0660 /var/log/passenger.log
-
 # Set file-creation mask
 umask 0077
 
