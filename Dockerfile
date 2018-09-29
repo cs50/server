@@ -19,14 +19,13 @@ RUN pip3 install \
         Django \
         Flask-JSGlue \
         raven[flask] \
-        SQLAlchemy \
-        virtualenv
+        SQLAlchemy
 
 # Install Passenger via gem, per https://www.phusionpassenger.com/library/install/standalone/install/oss/rubygems_norvm/,
 # rather than apt-get, per https://www.phusionpassenger.com/library/install/standalone/install/oss/trusty/,
 # else a version of nginx (compiled without ngx_http_fastcgi_module) gets installed from Passenger's repo, which yields:
 # unknown directive "fastcgi_param" in nginx.conf
-RUN gem install passenger -v 5.3.3
+RUN gem install passenger -v 5.3.5
 
 # Download any necessary files immediately, which would otherwise be downloading during the first run
 RUN passenger-config install-standalone-runtime && \
