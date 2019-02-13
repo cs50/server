@@ -6,7 +6,6 @@ deploy:
   provider: script
   script: docker push cs50/server:${TRAVIS_BRANCH/master/latest}
   on:
-    condition: $TRAVIS_BRANCH =~ ^master$
     all_branches: true
 notifications:
   slack:
