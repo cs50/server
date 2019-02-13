@@ -29,10 +29,6 @@ RUN apt-get install -y dirmngr gnupg && \
     apt-get update && \
     apt-get install -y passenger
 
-# Download any necessary files immediately, which would otherwise be downloading during the first run
-#RUN passenger-config install-standalone-runtime && \
-#    passenger-config build-native-support
-
 # Install server's own config files
 RUN mkdir -p /opt/cs50/bin && \
     chmod a+rx /opt/cs50 /opt/cs50/bin
