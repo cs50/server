@@ -36,7 +36,7 @@ PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=python3 \
 PASSENGER_TURBOCACHING=false \
 PASSENGER_USER=www-data \
-/usr/bin/passenger "$@"
+/usr/local/bin/passenger "$@"
 
 # Remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then
