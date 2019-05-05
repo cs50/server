@@ -45,12 +45,17 @@ http {
     # Suppress Passenger's version
     passenger_show_version_in_header off;
 
-    # Suppress Server header
-    server_tokens off;
-
     # Suppress log prefix
     # https://github.com/phusion/passenger/pull/2176
     passenger_disable_log_prefix on;
+
+    # Issue relative redirects
+    # http://nginx.org/en/docs/http/ngx_http_core_module.html#absolute_redirect
+    absolute_redirect off;
+
+    # Suppress Server header
+    # http://nginx.org/en/docs/http/ngx_http_core_module.html#server_tokens
+    server_tokens off;
 
     <% if File.file?("#{@apps[0][:root]}/http.conf") %>
     # http context
@@ -99,6 +104,10 @@ http {
         add_header Cache-Control "no-cache, no-store, must-revalidate";
         add_header Pragma "no-cache";
         add_header Expires "0";
+
+        # Disallow iframing
+        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
+        add_header Content-Security-Policy "frame-ancestors 'none'";
 
         # Redirect directory to directory/ (but with real scheme)
         if (-d $request_filename) {
