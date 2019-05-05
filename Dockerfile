@@ -21,15 +21,19 @@ RUN pip3 install \
         raven[flask] \
         SQLAlchemy
 
-# Install Passenger via gem, per https://www.phusionpassenger.com/library/install/standalone/install/oss/rubygems_norvm/,
-# rather than apt-get, per https://www.phusionpassenger.com/library/install/standalone/install/oss/trusty/,
-# else a version of nginx (compiled without ngx_http_fastcgi_module) gets installed from Passenger's repo, which yields:
-# unknown directive "fastcgi_param" in nginx.conf
-RUN gem install passenger
-
-# Download any necessary files immediately, which would otherwise be downloading during the first run
-RUN passenger-config install-standalone-runtime && \
-    passenger-config build-native-support
+# Install Passenger
+# https://www.phusionpassenger.com/library/install/standalone/install/oss/bionic/
+# https://stackoverflow.com/a/49462622
+RUN apt-get install -y dirmngr gnupg && \
+    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 && \
+    apt-get install -y apt-transport-https ca-certificates && \
+    echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger bionic main" > /etc/apt/sources.list.d/passenger.list && \
+    apt-get update && \
+    apt-get install -y passenger && \
+    mkdir -p /opt/nginx/build-modules && \
+    wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz && \
+    tar xzf /tmp/v0.33.tar.gz -C /opt/nginx/build-modules && \
+    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.33" --prefix=/opt/nginx
 
 # Install server's own config files
 RUN mkdir -p /opt/cs50/bin && \

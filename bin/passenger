@@ -26,6 +26,17 @@ fi
 # Set file-creation mask
 umask 0077
 
+# Check for --nginx-bin
+NGINX_BIN="--nginx-bin=/opt/nginx/sbin/nginx"
+if [[ "$1" == "start" ]] ; then
+    for i in "${@:2}" ; do
+        if [[ "$i" == --nginx-bin ]] || [[ "$i" == --nginx-bin=* ]] ; then
+            NGINX_BIN=
+            break
+        fi
+    done
+fi
+
 # Configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/
 PASSENGER_ENVIRONMENT="$PASSENGER_ENVIRONMENT" \
 PASSENGER_GROUP=www-data \
@@ -36,7 +47,7 @@ PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=python3 \
 PASSENGER_TURBOCACHING=false \
 PASSENGER_USER=www-data \
-/usr/local/bin/passenger "$@"
+/usr/bin/passenger "$@" "$NGINX_BIN"
 
 # Remove tmp/always_restart.txt in development mode
 if [ "$APPLICATION_ENV" == "dev" ]; then

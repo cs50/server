@@ -48,6 +48,10 @@ http {
     # Suppress Server header
     server_tokens off;
 
+    # Suppress log prefix
+    # https://github.com/phusion/passenger/pull/2176
+    passenger_disable_log_prefix on;
+
     <% if File.file?("#{@apps[0][:root]}/http.conf") %>
     # http context
     include <%= "#{@apps[0][:root]}/http.conf" %>;
