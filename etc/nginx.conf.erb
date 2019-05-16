@@ -104,7 +104,7 @@ http {
 
         # Disallow iframing
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-        more_set_headers "Content-Security-Policy: frame-ancestors 'none'";
+        more_set_headers "Content-Security-Policy: frame-ancestors 'self'";
 
         # Redirect directory to directory/ (but with real scheme)
         if (-d $request_filename) {
