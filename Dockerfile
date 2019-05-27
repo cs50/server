@@ -33,7 +33,8 @@ RUN apt-get install -y dirmngr gnupg && \
     mkdir -p /opt/nginx/build-modules && \
     wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz && \
     tar xzf /tmp/v0.33.tar.gz -C /opt/nginx/build-modules && \
-    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.33" --prefix=/opt/nginx
+    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.33" --prefix=/opt/nginx && \
+    rm -f /tmp/v0.33.tar.gz
 
 # Install server's own config files
 RUN mkdir -p /opt/cs50/bin && \
