@@ -27,8 +27,8 @@ fi
 umask 0077
 
 # Check for --nginx-bin
-NGINX_BIN="--nginx-bin=/opt/nginx/sbin/nginx"
 if [[ "$1" == "start" ]] ; then
+    NGINX_BIN="--nginx-bin=/opt/nginx/sbin/nginx"
     for i in "${@:2}" ; do
         if [[ "$i" == --nginx-bin ]] || [[ "$i" == --nginx-bin=* ]] ; then
             NGINX_BIN=
