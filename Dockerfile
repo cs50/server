@@ -4,6 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # TEMP
 ENV APPLICATION_ENV "production"
+ENV FLASK_ENV "production"
 
 # Default port (to match CS50 IDE)
 EXPOSE 8080
