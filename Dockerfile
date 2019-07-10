@@ -2,6 +2,9 @@ FROM cs50/cli
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 
+# TEMP
+ENV APPLICATION_ENV "production"
+
 # Default port (to match CS50 IDE)
 EXPOSE 8080
 
