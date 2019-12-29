@@ -99,8 +99,8 @@ http {
         # Disable caching
         # https://stackoverflow.com/a/2068407/5156190
         more_set_headers 'Cache-Control: no-cache, no-store, must-revalidate';
-        more_set_headers 'Pragma: no-cache';
         more_set_headers 'Expires: 0';
+        more_set_headers 'Pragma: no-cache';
 
         # Disallow iframing
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
