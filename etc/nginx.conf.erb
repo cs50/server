@@ -46,6 +46,10 @@ http {
     # http://nginx.org/en/docs/http/ngx_http_core_module.html#absolute_redirect
     absolute_redirect off;
 
+    # Include newer MIME types than Passenger includes
+    # https://github.com/nginx/nginx/blob/master/conf/mime.types
+    include '/opt/nginx/conf/mime.types';
+
     # Remove headers
     more_clear_headers 'Server';
     more_clear_headers 'X-Powered-By';
