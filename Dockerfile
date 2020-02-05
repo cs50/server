@@ -5,9 +5,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Default port (to match CS50 IDE)
 EXPOSE 8080
 
-# Packages 
+# Packages
 RUN apt-get update && \
     apt-get install -y \
+        jq \
         libcurl4-openssl-dev `# required by passenger-config` \
         libmysqlclient-dev \
         libpcre3-dev `# required by passenger-config` \
