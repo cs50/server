@@ -8,7 +8,6 @@ EXPOSE 8080
 # Packages
 RUN apt-get update && \
     apt-get install -y \
-        jq \
         libcurl4-openssl-dev `# required by passenger-config` \
         libmysqlclient-dev \
         libpcre3-dev `# required by passenger-config` \
