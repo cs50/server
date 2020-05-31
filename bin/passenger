@@ -11,6 +11,10 @@ else
     phpdismod xdebug && cp -f /usr/lib/php/7.2/php.ini-production /etc/php/7.2/fpm/php.ini
 fi
 
+# Match Nginx's client_max_body_size
+sed -i 's/post_max_size\s*=.*/post_max_size = 1024M/' /etc/php/7.2/fpm/php.ini
+sed -i 's/upload_max_filesize\s*=.*/upload_max_filesize = 1024M/' /etc/php/7.2/fpm/php.ini
+
 # Start PHP-FPM
 /etc/init.d/php7.2-fpm start
 
