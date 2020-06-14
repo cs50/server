@@ -1,0 +1,2 @@
+FROM cs50/server
+EXPOSE 8080

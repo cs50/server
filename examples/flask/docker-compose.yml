@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    environment:
+      APPLICATION_ENV: dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/var/www
+version: "3.6"
