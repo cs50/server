@@ -1,0 +1,27 @@
+services:
+  web:
+    build: .
+    depends_on:
+      - mysql
+    environment:
+      APPLICATION_ENV: dev
+      MYSQL_DATABASE: example
+      MYSQL_HOST: mysql
+      MYSQL_PASSWORD: crimson
+      MYSQL_USERNAME: root
+    links:
+      - mysql
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/var/www
+  mysql:
+    command: --default-authentication-plugin=mysql_native_password
+    image: cs50/mysql:8
+    environment:
+      MYSQL_DATABASE: example
+      MYSQL_ROOT_PASSWORD: crimson
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-uroot", "-pcrimson", "ping"]
+    restart: always
+version: "3.6"
