@@ -9,7 +9,6 @@ EXPOSE 8080
 RUN apt-get update && \
     apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
-        libmysqlclient-dev \
         libpcre3-dev `# required by passenger-config` \
         php-fpm \
         php-memcached \
