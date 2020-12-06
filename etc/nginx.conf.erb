@@ -134,7 +134,7 @@ http {
             fastcgi_param HTTP_X_FORWARDED_SERVER $host;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             fastcgi_param SERVER_NAME $host;
-            fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+            fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
             include /usr/local/etc/fastcgi_params;
             try_files $uri =404;
