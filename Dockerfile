@@ -9,6 +9,7 @@ EXPOSE 8080
 RUN apt-get update && \
     apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
+        php8.0 \
         php8.0-xdebug
 RUN gem install \
         rack
