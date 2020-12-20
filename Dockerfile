@@ -14,6 +14,8 @@ RUN apt-get update && \
         php-memcached \
         php-mysql \
         php-xdebug
+RUN gem install \
+        rack
 RUN pip3 install \
         Django \
         Flask-JSGlue \
