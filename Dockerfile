@@ -1,4 +1,4 @@
-FROM cs50/cli
+FROM cs50/cli:bionic
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 
