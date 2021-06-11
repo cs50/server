@@ -120,6 +120,11 @@ http {
             return 301 https://$host$request_uri;
         }
 
+        # Send HSTS header in production
+        <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
+        more_set_headers "Strict-Transport-Security: max-age=60";
+        <% end %>
+
         # Omit port from rewrites in server.conf 
         <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
         port_in_redirect off;
