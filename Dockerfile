@@ -1,4 +1,4 @@
-FROM cs50/cli:focal
+FROM cs50/cli
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 
