@@ -1,7 +1,6 @@
-name: Build and push
 on: push
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Docker Buildx
@@ -17,7 +16,7 @@ jobs:
           load: true
           tags: cs50/server:${{ github.sha }},cs50/server:latest
       - name: Push
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/focal' }}
         run: |
           docker push cs50/server:${{ github.sha }}
           docker push cs50/server:latest
