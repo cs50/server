@@ -1,11 +1,16 @@
 FROM cs50/cli
-USER root
 ARG DEBIAN_FRONTEND=noninteractive
+
 
 # Default port (to match CS50 IDE)
 EXPOSE 8080
 
-# Packages
+
+# Unset user
+USER root
+
+
+# Install Ubuntu packages
 RUN apt-get update && \
     apt-get install -y \
         libcurl4-openssl-dev `# required by passenger-config` \
@@ -18,6 +23,7 @@ RUN pip3 install \
         Flask-JSGlue \
         raven[flask] \
         SQLAlchemy
+
 
 # Install Passenger
 # https://www.phusionpassenger.com/library/install/standalone/install/oss/bionic/
@@ -35,8 +41,9 @@ RUN apt-get install -y dirmngr gnupg && \
     passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.33" --prefix=/opt/nginx && \
     rm -f /tmp/v0.33.tar.gz
 
+
 # Install server's own config files
-RUN mkdir -p /opt/cs50/bin && \
+RUN mkdir --parent /opt/cs50/bin && \
     chmod a+rx /opt/cs50 /opt/cs50/bin
 ENV PATH /opt/cs50/bin:"$PATH"
 COPY ./bin/* /opt/cs50/bin/
@@ -44,10 +51,12 @@ RUN chmod a+rx /opt/cs50/bin/*
 COPY ./etc/* /usr/local/etc/
 RUN chmod a+r /usr/local/etc/*
 
+
 # When child image is built from this one, copy its files into image
 ONBUILD COPY . /var/www/
 ONBUILD RUN chown -R www-data:www-data /var/www
 WORKDIR /var/www
+
 
 # Start server within WORKDIR
 CMD ["passenger", "start"]
