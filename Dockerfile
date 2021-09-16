@@ -20,7 +20,7 @@ RUN apt update && \
         php-xdebug
 RUN gem install \
         rack
-RUN pip3 install \
+RUN pip install \
         Django \
         Flask-JSGlue \
         raven[flask] \
@@ -58,6 +58,11 @@ RUN chmod a+r /usr/local/etc/*
 ONBUILD COPY . /var/www/
 ONBUILD RUN chown -R www-data:www-data /var/www
 WORKDIR /var/www
+
+
+# Install packages, if any
+ONBUILD RUN (test -f package.json && npm install) || true
+ONBUILD RUN (test -f requirements.txt && pip install -r requirements.txt) || true
 
 
 # Start server within WORKDIR
