@@ -1,4 +1,4 @@
-FROM cs50/cli
+FROM cs50/cli:minimal
 ARG DEBIAN_FRONTEND=noninteractive
 
 
@@ -11,9 +11,11 @@ USER root
 
 
 # Install Ubuntu packages
-RUN apt-get update && \
-    apt-get install -y \
-        libcurl4-openssl-dev `# required by passenger-config` \
+RUN apt update && \
+    apt install -y \
+        libcurl4-openssl-dev `# Required by passenger-config` \
+        libmysqlclient-dev `# For mysql` \
+        mysql-client `# For mysql` \
         php-fpm \
         php-xdebug
 RUN gem install \
@@ -28,12 +30,12 @@ RUN pip3 install \
 # Install Passenger
 # https://www.phusionpassenger.com/library/install/standalone/install/oss/bionic/
 # https://stackoverflow.com/a/49462622
-RUN apt-get install -y dirmngr gnupg && \
+RUN apt install -y dirmngr gnupg && \
     APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 && \
-    apt-get install -y apt-transport-https ca-certificates && \
+    apt install -y apt-transport-https ca-certificates && \
     echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger focal main" > /etc/apt/sources.list.d/passenger.list && \
-    apt-get update && \
-    apt-get install -y passenger && \
+    apt update && \
+    apt install -y passenger && \
     passenger-config build-native-support && \
     mkdir -p /opt/nginx/build-modules && \
     wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.33.tar.gz && \
