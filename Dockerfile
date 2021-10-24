@@ -22,7 +22,11 @@ RUN gem install \
         rack
 RUN pip install \
         Django \
+        Flask \
         Flask-JSGlue \
+        Flask-Migrate \
+        Flask-Session \
+        mysqlclient \
         raven[flask] \
         SQLAlchemy
 
