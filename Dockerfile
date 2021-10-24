@@ -23,7 +23,6 @@ RUN gem install \
 RUN pip install \
         Django \
         Flask \
-        Flask-JSGlue \
         Flask-Migrate \
         Flask-Session \
         mysqlclient \
