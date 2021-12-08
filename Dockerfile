@@ -1,5 +1,6 @@
 FROM cs50/cli
 ARG DEBIAN_FRONTEND=noninteractive
+ARG VCS_REF
 
 
 # Default port (to match CS50 IDE)
