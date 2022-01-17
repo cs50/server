@@ -22,6 +22,8 @@ jobs:
             VCS_REF=${{ github.sha }}
           load: true
           tags: cs50/server:latest
+          cache-from: type=registry,ref=cs50/server:buildcache
+          cache-to: type=registry,ref=cs50/server:buildcache,mode=max
 
       - name: Push to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
