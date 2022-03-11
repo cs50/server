@@ -1,9 +1,8 @@
 .*
-!.github
+!/.github/
 !.gitignore
 *.lock
 *.log
 *.pyc
-!.travis.yml
 examples/*/log/
 __pycache__/

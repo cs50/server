@@ -64,9 +64,9 @@ WORKDIR /var/www
 
 
 # Install packages, if any
-ONBUILD RUN (test -f Gemfile && bundle install) || true
-ONBUILD RUN (test -f package.json && npm install) || true
-ONBUILD RUN (test -f requirements.txt && pip install -r requirements.txt) || true
+ONBUILD RUN test ! -f Gemfile || bundle install
+ONBUILD RUN test ! -f package.json || npm install
+ONBUILD RUN test ! -f requirements.txt || pip install -r requirements.txt
 
 
 # Start server within WORKDIR
