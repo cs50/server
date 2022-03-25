@@ -20,7 +20,7 @@ RUN apt update && \
         php-xdebug
 RUN gem install \
         rack
-RUN pip install \
+RUN pip3 install \
         Django \
         Flask \
         Flask-Migrate \
@@ -66,7 +66,7 @@ WORKDIR /var/www
 # Install packages, if any
 ONBUILD RUN test ! -f Gemfile || bundle install
 ONBUILD RUN test ! -f package.json || npm install
-ONBUILD RUN test ! -f requirements.txt || pip install -r requirements.txt
+ONBUILD RUN test ! -f requirements.txt || pip3 install -r requirements.txt
 
 
 # Start server within WORKDIR
