@@ -125,7 +125,7 @@ http {
         more_set_headers "Strict-Transport-Security: max-age=60";
         <% end %>
 
-        # Omit port from rewrites in server.conf 
+        # Omit port from rewrites in server.conf
         <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
         port_in_redirect off;
         <% end %>
@@ -139,7 +139,7 @@ http {
             fastcgi_param HTTP_X_FORWARDED_SERVER $host;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             fastcgi_param SERVER_NAME $host;
-            fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+            fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
             include /usr/local/etc/fastcgi_params;
             try_files $uri =404;
