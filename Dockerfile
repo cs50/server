@@ -47,6 +47,13 @@ RUN apt install --no-install-recommends --yes dirmngr gnupg && \
     rm -f /tmp/v0.33.tar.gz
 
 
+# Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory"
+RUN echo "deb http://security.ubuntu.com/ubuntu impish-security main" | sudo tee /etc/apt/sources.list.d/impish-security.list
+RUN sudo apt update
+RUN sudo apt install --no-install-recommends --yes \
+    libssl1.1
+
+
 # Install server's own config files
 RUN mkdir --parent /opt/cs50/bin && \
     chmod a+rx /opt/cs50 /opt/cs50/bin
