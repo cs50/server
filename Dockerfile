@@ -48,10 +48,9 @@ RUN apt install --no-install-recommends --yes dirmngr gnupg && \
 
 
 # Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory"
-RUN echo "deb http://security.ubuntu.com/ubuntu impish-security main" | sudo tee /etc/apt/sources.list.d/impish-security.list
-RUN sudo apt update
-RUN sudo apt install --no-install-recommends --yes \
-    libssl1.1
+# https://stackoverflow.com/questions/72133316/ubuntu-22-04-libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-di
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb && \
+    dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
 
 
 # Install server's own config files
