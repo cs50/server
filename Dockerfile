@@ -29,6 +29,10 @@ RUN pip3 install \
         raven[flask] \
         SQLAlchemy
 
+# Fix cryptography version to 38.0.4 until Passenger is compatible with 39.0.0
+# https://cryptography.io/en/latest/changelog/#v39-0-0
+RUN pip3 install cryptography==38.0.4 --upgrade
+
 
 # Install Passenger
 # https://www.phusionpassenger.com/library/install/standalone/install/oss/bionic/
