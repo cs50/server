@@ -10,7 +10,7 @@ EXPOSE 8080
 USER root
 
 
-# Install Ubuntu packages
+# Install packages
 RUN apt update && \
     apt install --no-install-recommends --yes \
         libcurl4-openssl-dev `# Required by passenger-config` \
@@ -28,10 +28,6 @@ RUN pip3 install \
         mysqlclient \
         raven[flask] \
         SQLAlchemy
-
-# Fix cryptography version to 38.0.4 until Passenger is compatible with 39.0.0
-# https://cryptography.io/en/latest/changelog/#v39-0-0
-RUN pip3 install cryptography==38.0.4 --upgrade
 
 
 # Install Passenger
