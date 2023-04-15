@@ -51,14 +51,11 @@ RUN apt install --no-install-recommends --yes dirmngr gnupg && \
     rm -f /tmp/v0.34.tar.gz
 
 
-# Install server's own config files
-RUN mkdir --parent /opt/cs50/bin && \
-    chmod a+rx /opt/cs50 /opt/cs50/bin
-ENV PATH /opt/cs50/bin:"$PATH"
-COPY ./bin/* /opt/cs50/bin/
+# Copy files to image
+COPY ./etc /etc
+COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
-COPY ./etc/* /usr/local/etc/
-RUN chmod a+r /usr/local/etc/*
+ENV PATH /opt/cs50/bin:"$PATH"
 
 
 # When child image is built from this one, copy its files into image
