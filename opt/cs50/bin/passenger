@@ -45,7 +45,7 @@ fi
 PASSENGER_ENVIRONMENT="$PASSENGER_ENVIRONMENT" \
 PASSENGER_GROUP=www-data \
 PASSENGER_LOG_FILE=/var/log/passenger.log \
-PASSENGER_NGINX_CONFIG_TEMPLATE=/usr/local/etc/nginx.conf.erb \
+PASSENGER_NGINX_CONFIG_TEMPLATE=/opt/cs50/etc/nginx.conf.erb \
 PASSENGER_PID_FILE=/var/run/passenger.pid \
 PASSENGER_PORT=8080 \
 PASSENGER_PYTHON=python3 \

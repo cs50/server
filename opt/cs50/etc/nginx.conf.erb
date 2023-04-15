@@ -141,7 +141,7 @@ http {
             fastcgi_param SERVER_NAME $host;
             fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            include /usr/local/etc/fastcgi_params;
+            include /opt/cs50/etc/fastcgi_params;
             try_files $uri =404;
         }
         <% end %>
