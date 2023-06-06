@@ -17,26 +17,25 @@ RUN apt update && \
         libmysqlclient-dev `# For mysql` \
         mysql-client `# For mysql` \
         php-fpm \
-        php-xdebug
-RUN gem install \
-        rack
-RUN pip3 install \
-        Django \
-        Flask \
-        Flask-Migrate \
-        Flask-Session \
-        mysqlclient \
-        raven[flask] \
-        SQLAlchemy
+        php-xdebug && \
+    gem install \
+            rack && \
+    pip3 install \
+            Django \
+            Flask \
+            Flask-Migrate \
+            Flask-Session \
+            mysqlclient \
+            raven[flask] \
+            SQLAlchemy
 
 
 # Install Passenger
 # https://www.phusionpassenger.com/library/install/standalone/install/oss/bionic/
 # https://stackoverflow.com/a/49462622
-RUN apt install --no-install-recommends --yes dirmngr gnupg && \
-    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7 && \
-    apt install --no-install-recommends --yes apt-transport-https ca-certificates && \
-    echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger focal main" > /etc/apt/sources.list.d/passenger.list && \
+RUN apt install --no-install-recommends --yes dirmngr gnupg apt-transport-https ca-certificates && \
+    curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null && \
+    echo deb https://oss-binaries.phusionpassenger.com/apt/passenger jammy main > /etc/apt/sources.list.d/passenger.list && \
     apt update && \
     apt install --install-recommends --yes passenger && \
     passenger-config build-native-support && \
