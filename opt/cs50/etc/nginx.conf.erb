@@ -122,7 +122,7 @@ http {
 
         # Send HSTS header in production
         <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
-        more_set_headers "Strict-Transport-Security: max-age=60";
+        more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
         <% end %>
 
         # Omit port from rewrites in server.conf
