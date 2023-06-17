@@ -88,6 +88,30 @@ http {
         }
     <% end %>
 
+    # Send HSTS header over HTTPS
+    <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
+    map $real_scheme $strict_transport_security {
+        default '';
+        'https' 'max-age=31536000; includeSubDomains';
+    }
+    more_set_headers 'Strict-Transport-Security: $strict_transport_security';
+    <% end %>
+
+    # Omit port from rewrites in server.conf
+    <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
+    port_in_redirect off;
+    <% end %>
+
+    # Disable caching
+    # https://stackoverflow.com/a/2068407/5156190
+    more_set_headers 'Cache-Control: no-cache, no-store, must-revalidate';
+    more_set_headers 'Expires: 0';
+    more_set_headers 'Pragma: no-cache';
+
+    # Disallow iframing
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
+    more_set_headers "Content-Security-Policy: frame-ancestors 'self'";
+
     <% for app in @apps[0,1] %>
     server {
         <%= include_passenger_internal_template('server.erb', 8, true, binding) %>
@@ -100,16 +124,6 @@ http {
         # Learn more at:
         # https://www.phusionpassenger.com/library/config/standalone/intro.html#nginx-configuration-template
 
-        # Disable caching
-        # https://stackoverflow.com/a/2068407/5156190
-        more_set_headers 'Cache-Control: no-cache, no-store, must-revalidate';
-        more_set_headers 'Expires: 0';
-        more_set_headers 'Pragma: no-cache';
-
-        # Disallow iframing
-        # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-        more_set_headers "Content-Security-Policy: frame-ancestors 'self'";
-
         # Redirect directory to directory/ (but with real scheme)
         if (-d $request_filename) {
             rewrite [^/]$ $real_scheme://$http_host$uri/ permanent;
@@ -119,16 +133,6 @@ http {
         if ($http_x_forwarded_proto = 'http') {
             return 301 https://$host$request_uri;
         }
-
-        # Send HSTS header in production
-        <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
-        more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
-        <% end %>
-
-        # Omit port from rewrites in server.conf
-        <% if ENV["PASSENGER_ENVIRONMENT"] == "production" %>
-        port_in_redirect off;
-        <% end %>
 
         <% if !app[:app_type] && !AppFinder::STARTUP_FILES.any? do |file| File.exist?("#{@apps[0][:root]}/#{file}") end %>
         # Assume PHP if autodetection fails
