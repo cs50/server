@@ -119,6 +119,7 @@ http {
     more_set_headers "X-Frame-Options: SAMEORIGIN";
 
     # Disable for other origins
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Permissions_Policy
     more_set_headers 'Permissions-Policy: camera=(self), geolocation=(self), microphone=(self)';
 
     # Disable Referer:
