@@ -108,11 +108,26 @@ http {
     more_set_headers 'Expires: 0';
     more_set_headers 'Pragma: no-cache';
 
+    # Disable MIME-sniffing
+    # https://developer.okta.com/blog/2021/10/18/security-headers-best-practices#x-content-type-options
+    more_set_headers 'X-Content-Type-Options: nosniff';
+
     # Disallow iframing
-    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
-    more_set_headers "X-Frame-Options: SAMEORIGIN";
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
     more_set_headers "Content-Security-Policy: frame-ancestors 'self'";
+    more_set_headers "X-Frame-Options: SAMEORIGIN";
+
+    # Disable for other origins
+    more_set_headers 'Permissions-Policy: camera=(self), geolocation=(self), microphone=(self)';
+
+    # Disable Referer:
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+    more_set_headers 'Referrer-Policy: no-referrer';
+
+    # Disable XSS auditor
+    # https://developer.okta.com/blog/2021/10/18/security-headers-best-practices#x-xss-protection
+    more_set_headers 'X-XSS-Protection: 0';
 
     <% for app in @apps[0,1] %>
     server {
