@@ -1,31 +1,56 @@
-on:
-  - push
-  - workflow_dispatch
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest-16-cores
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Docker Hub
+      - name: Log into Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build
+      - name: Build for linux/amd64
         uses: docker/build-push-action@v3
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
           load: true
-          tags: cs50/server:latest
-          cache-from: type=registry,ref=cs50/server:buildcache
-          cache-to: type=registry,ref=cs50/server:buildcache,mode=max
+          platforms: linux/amd64
+          tags: cs50/server:amd64
+          cache-from: type=registry,ref=cs50/server:amd64-buildcache
+          cache-to: type=registry,ref=cs50/server:amd64-buildcache,mode=max
 
-      - name: Push to Docker Hub
+      - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          docker push cs50/server:latest
+          docker push cs50/server:amd64
+
+      - name: Build for linux/arm64
+        uses: docker/build-push-action@v3
+        with:
+          build-args: |
+            VCS_REF=${{ github.sha }}
+          load: true
+          platforms: linux/arm64
+          tags: cs50/server:arm64
+          cache-from: type=registry,ref=cs50/server:arm64-buildcache
+          cache-to: type=registry,ref=cs50/server:arm64-buildcache,mode=max
+
+      - name: Push linux/arm64 build to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker push cs50/server:arm64
+
+      - name: Create multi-arch manifest and push to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker manifest create cs50/server:latest \
+          --amend cs50/server:amd64 \
+          --amend cs50/server:arm64
+          docker manifest push cs50/server:latest
