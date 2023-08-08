@@ -122,9 +122,9 @@ http {
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Permissions_Policy
     more_set_headers 'Permissions-Policy: camera=(self), geolocation=(self), microphone=(self)';
 
-    # Disable Referer:
+    # Send only the origin when the protocol security level stays the same
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
-    more_set_headers 'Referrer-Policy: no-referrer';
+    more_set_headers 'Referrer-Policy: strict-origin';
 
     # Disable XSS auditor
     # https://developer.okta.com/blog/2021/10/18/security-headers-best-practices#x-xss-protection
