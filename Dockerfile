@@ -34,7 +34,7 @@ RUN apt install --no-install-recommends --yes dirmngr gnupg apt-transport-https 
     apt install --install-recommends --yes passenger && \
     passenger-config build-native-support && \
     mkdir -p /opt/nginx/build-modules && \
-    curl -LJ -o /tmp/v0.34.tar.gz https://github.com/openresty/headers-more-nginx-module/archive/v0.34.tar.gz && \
+    wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.34.tar.gz && \
     tar xzf /tmp/v0.34.tar.gz -C /opt/nginx/build-modules && \
     passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.34" --prefix=/opt/nginx && \
     rm -f /tmp/v0.34.tar.gz
