@@ -23,6 +23,7 @@ RUN apt update && \
             Flask-Migrate \
             Flask-Session \
             mysqlclient \
+            python-dateutil \
             raven[flask] \
             SQLAlchemy
 
