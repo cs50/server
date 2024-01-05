@@ -40,10 +40,6 @@ RUN apt install --no-install-recommends --yes dirmngr gnupg apt-transport-https 
     rm -f /tmp/v0.34.tar.gz
 
 
-# Remove once this issue is fixed: https://github.com/phusion/passenger/issues/2501
-RUN curl https://raw.githubusercontent.com/phusion/passenger/a19753cdb1c5f6048e74db109978382f8982f8e1/src/helper-scripts/wsgi-loader.py > /usr/share/passenger/helper-scripts/wsgi-loader.py
-
-
 # Generate a self-signed SSL certificate for testing purposes
 RUN mkdir -p /etc/nginx/ssl && \
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com"
