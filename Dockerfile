@@ -7,6 +7,9 @@ EXPOSE 443
 # Unset user
 USER root
 
+# Unminimize system
+RUN yes | unminimize
+
 # Install packages
 RUN apt update && \
     apt install --no-install-recommends --yes \
@@ -39,7 +42,6 @@ RUN apt install --no-install-recommends --yes dirmngr gnupg apt-transport-https 
     tar xzf /tmp/v0.34.tar.gz -C /opt/nginx/build-modules && \
     passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.34" --prefix=/opt/nginx && \
     rm -f /tmp/v0.34.tar.gz
-
 
 # Generate a self-signed SSL certificate for testing purposes
 RUN mkdir -p /etc/nginx/ssl && \
