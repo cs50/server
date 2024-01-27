@@ -16,6 +16,6 @@ run:
 	docker run --interactive --publush-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)"/examples:/var/www --tag cs50/server bash --login
 
 squash: depends
-    docker images cs50/server
-    docker-squash --tag cs50/cli cs50/cli
-    docker images cs50/server
+	docker images cs50/server
+	docker-squash --tag cs50/cli cs50/cli
+	docker images cs50/server
