@@ -17,5 +17,5 @@ run:
 
 squash: depends
 	docker images cs50/server
-	docker-squash --tag cs50/cli cs50/cli
+	docker-squash --tag cs50/server cs50/server
 	docker images cs50/server
