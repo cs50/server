@@ -13,7 +13,7 @@ rebuild:
 	$(MAKE) squash
 
 run:
-	docker run --interactive --publush-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)"/examples:/var/www --tag cs50/server bash --login
+	docker run --interactive --publish-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)"/examples:/var/www cs50/server bash --login
 
 squash: depends
 	docker images cs50/server

@@ -7,9 +7,6 @@ EXPOSE 443
 # Unset user
 USER root
 
-# Unminimize system
-RUN yes | unminimize
-
 # Install packages
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
