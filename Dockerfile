@@ -17,7 +17,8 @@ RUN apt update && \
         libmysqlclient-dev `# For mysql` \
         mysql-client `# For mysql` \
         php-fpm \
-        php-xdebug && \
+        php-xdebug \
+        pkg-config `# For mysqlclient` && \
     gem install \
             rack && \
     pip3 install \
