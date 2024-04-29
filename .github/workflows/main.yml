@@ -98,7 +98,7 @@ jobs:
       - name: Squash for linux/arm64
         run: |
           pip3 install docker-squash
-          docker-squash --tag cs50/server:arm64 cs50/server:arm64
+          $HOME/.local/bin/docker-squash --tag cs50/server:arm64 cs50/server:arm64
 
       - name: Push linux/arm64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
