@@ -1,4 +1,4 @@
-FROM cs50/cli
+FROM cs50/cli:canary
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Default port (to match CS50 IDE)
