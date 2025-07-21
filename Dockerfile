@@ -54,7 +54,7 @@ RUN mkdir --parents /etc/nginx/ssl && \
 COPY ./etc /etc
 COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
-ENV PATH /opt/cs50/bin:"$PATH"
+ENV PATH=/opt/cs50/bin:"$PATH"
 
 # When child image is built from this one, copy its files into image
 ONBUILD COPY . /var/www/
