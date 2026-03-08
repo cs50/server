@@ -1,7 +1,7 @@
 FROM cs50/cli:canary
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Default port (to match CS50 IDE)
+# Default port
 EXPOSE 443
 
 # Unset user
@@ -29,22 +29,23 @@ RUN apt update && \
         SQLAlchemy
 
 # Install Passenger
-RUN apt install --no-install-recommends --no-install-suggests --yes \
+RUN apt update && \
+    apt install --no-install-recommends --no-install-suggests --yes \
         apt-transport-https \
         ca-certificates \
         dirmngr \
         gnupg && \
-    curl curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null && \
+    curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null && \
     echo deb https://oss-binaries.phusionpassenger.com/apt/passenger noble main > /etc/apt/sources.list.d/passenger.list && \
     apt update && \
     apt install --install-recommends --no-install-suggests --yes \
         passenger && \
     passenger-config build-native-support && \
     mkdir --parents /opt/nginx/build-modules && \
-    wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.34.tar.gz && \
-    tar xzf /tmp/v0.34.tar.gz -C /opt/nginx/build-modules && \
-    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.34" --prefix=/opt/nginx && \
-    rm --force /tmp/v0.34.tar.gz
+    wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.39.tar.gz && \
+    tar xzf /tmp/v0.39.tar.gz -C /opt/nginx/build-modules && \
+    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.39" --prefix=/opt/nginx && \
+    rm --force /tmp/v0.39.tar.gz
 
 # Generate a self-signed SSL certificate for testing purposes
 RUN mkdir --parents /etc/nginx/ssl && \
