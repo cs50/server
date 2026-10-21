@@ -7,6 +7,12 @@ EXPOSE 443
 # Unset user
 USER root
 
+# Minimum acceptable php8.3-fpm package version. Bumping this both busts the
+# layer cache for the apt install below and makes the build fail if the
+# archive (or a stale cache) would ship an older, vulnerable PHP.
+# 8.3.6-0ubuntu0.24.04.13 fixes CVE-2026-109618 and CVE-2026-109619 (php2shell), USN-8948-1
+ARG PHP_FPM_MIN_VERSION=8.3.6-0ubuntu0.24.04.13
+
 # Install packages
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
@@ -16,6 +22,8 @@ RUN apt update && \
         php-fpm \
         php-xdebug \
         pkg-config `# For mysqlclient` && \
+    { dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show php8.3-fpm)" ge "$PHP_FPM_MIN_VERSION" || \
+        { echo "php8.3-fpm $(dpkg-query --showformat='${Version}' --show php8.3-fpm) is older than required $PHP_FPM_MIN_VERSION" >&2; exit 1; }; } && \
     gem install \
         rack && \
     pip3 install \
