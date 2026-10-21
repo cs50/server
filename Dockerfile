@@ -22,8 +22,8 @@ RUN apt update && \
         php-fpm \
         php-xdebug \
         pkg-config `# For mysqlclient` && \
-    dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show php8.3-fpm)" ge "$PHP_FPM_MIN_VERSION" || \
-        { echo "php8.3-fpm $(dpkg-query --showformat='${Version}' --show php8.3-fpm) is older than required $PHP_FPM_MIN_VERSION" >&2; exit 1; } && \
+    { dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show php8.3-fpm)" ge "$PHP_FPM_MIN_VERSION" || \
+        { echo "php8.3-fpm $(dpkg-query --showformat='${Version}' --show php8.3-fpm) is older than required $PHP_FPM_MIN_VERSION" >&2; exit 1; }; } && \
     gem install \
         rack && \
     pip3 install \
