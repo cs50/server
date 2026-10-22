@@ -38,6 +38,10 @@ jobs:
           pip3 install docker-squash
           docker-squash --tag cs50/server:amd64 cs50/server:amd64
 
+      - name: Smoke-test linux/amd64 build
+        run: |
+          bash tests/smoke.sh cs50/server:amd64
+
       - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
@@ -82,6 +86,10 @@ jobs:
         run: |
           pip3 install docker-squash
           docker-squash --tag cs50/server:arm64 cs50/server:arm64
+
+      - name: Smoke-test linux/arm64 build
+        run: |
+          bash tests/smoke.sh cs50/server:arm64
 
       - name: Push linux/arm64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}

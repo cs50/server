@@ -63,6 +63,7 @@ RUN mkdir --parents /etc/nginx/ssl && \
 COPY ./etc /etc
 COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
+# Must be ENV, not /etc/profile.d: exec-form CMD runs no login shell, and cli.sh skips root, so `passenger` would otherwise resolve to /usr/bin/passenger, bypassing the wrapper
 ENV PATH=/opt/cs50/bin:"$PATH"
 
 # When child image is built from this one, copy its files into image
