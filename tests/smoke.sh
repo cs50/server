@@ -18,4 +18,7 @@ test "$(run "$IMAGE" bash --login -c 'type -P passenger')" = /opt/cs50/bin/passe
 echo "- the wrapper is executable and calls the real binary by absolute path"
 run "$IMAGE" bash -c 'test -x /opt/cs50/bin/passenger && grep -q "^/usr/bin/passenger " /opt/cs50/bin/passenger'
 
+echo "- the wrapper's PHP_VERSION matches the installed PHP-FPM and the nginx template (catches a base-image PHP bump)"
+run "$IMAGE" bash -c 'v=$(sed -n "s/^PHP_VERSION=//p" /opt/cs50/bin/passenger); test -n "$v" && test -x /etc/init.d/php$v-fpm && test -f /etc/php/$v/fpm/pool.d/www.conf && test -f /usr/lib/php/$v/php.ini-production && grep -q "php$v-fpm.sock" /opt/cs50/etc/nginx.conf.erb'
+
 echo "OK"

@@ -7,11 +7,14 @@ EXPOSE 443
 # Unset user
 USER root
 
-# Minimum acceptable php8.3-fpm package version. Bumping this both busts the
+# PHP version shipped by the base image's Ubuntu release (26.04 ships PHP 8.5 only)
+ARG PHP_VERSION=8.5
+
+# Minimum acceptable php8.5-fpm package version. Bumping this both busts the
 # layer cache for the apt install below and makes the build fail if the
 # archive (or a stale cache) would ship an older, vulnerable PHP.
-# 8.3.6-0ubuntu0.24.04.13 fixes CVE-2026-109618 and CVE-2026-109619 (php2shell), USN-8948-1
-ARG PHP_FPM_MIN_VERSION=8.3.6-0ubuntu0.24.04.13
+# 8.5.4-0ubuntu1.5 fixes CVE-2026-109618 and CVE-2026-109619 (php2shell), USN-8948-1
+ARG PHP_FPM_MIN_VERSION=8.5.4-0ubuntu1.5
 
 # Install packages
 RUN apt update && \
@@ -22,8 +25,8 @@ RUN apt update && \
         php-fpm \
         php-xdebug \
         pkg-config `# For mysqlclient` && \
-    { dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show php8.3-fpm)" ge "$PHP_FPM_MIN_VERSION" || \
-        { echo "php8.3-fpm $(dpkg-query --showformat='${Version}' --show php8.3-fpm) is older than required $PHP_FPM_MIN_VERSION" >&2; exit 1; }; } && \
+    { dpkg --compare-versions "$(dpkg-query --showformat='${Version}' --show php${PHP_VERSION}-fpm)" ge "$PHP_FPM_MIN_VERSION" || \
+        { echo "php${PHP_VERSION}-fpm $(dpkg-query --showformat='${Version}' --show php${PHP_VERSION}-fpm) is older than required $PHP_FPM_MIN_VERSION" >&2; exit 1; }; } && \
     gem install \
         rack && \
     pip3 install \
@@ -44,7 +47,7 @@ RUN apt update && \
         dirmngr \
         gnupg && \
     curl https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key-2025.txt | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/phusion.gpg >/dev/null && \
-    echo deb https://oss-binaries.phusionpassenger.com/apt/passenger noble main > /etc/apt/sources.list.d/passenger.list && \
+    echo deb https://oss-binaries.phusionpassenger.com/apt/passenger $(. /etc/os-release && echo "$VERSION_CODENAME") main > /etc/apt/sources.list.d/passenger.list && \
     apt update && \
     apt install --install-recommends --no-install-suggests --yes \
         passenger && \
