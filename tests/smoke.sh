@@ -21,4 +21,20 @@ run "$IMAGE" bash -c 'test -x /opt/cs50/bin/passenger && grep -q "^/usr/bin/pass
 echo "- the wrapper's PHP_VERSION matches the installed PHP-FPM and the nginx template (catches a base-image PHP bump)"
 run "$IMAGE" bash -c 'v=$(sed -n "s/^PHP_VERSION=//p" /opt/cs50/bin/passenger); test -n "$v" && test -x /etc/init.d/php$v-fpm && test -f /etc/php/$v/fpm/pool.d/www.conf && test -f /usr/lib/php/$v/php.ini-production && grep -q "php$v-fpm.sock" /opt/cs50/etc/nginx.conf.erb'
 
+echo "- Passenger's Ruby native support is prebuilt for the image's Ruby (so apps need not compile it on first spawn)"
+run "$IMAGE" bash -c 'test -f "$(ruby -e "print RbConfig::CONFIG[\"sitearchdir\"]")/passenger_native_support.so"'
+
+echo "- passenger start serves a Flask app end-to-end (nginx, Passenger, Python)"
+cid=$(docker run --detach --rm --publish 127.0.0.1::8080 --volume "$(cd "$(dirname "$0")/.." && pwd)/examples/flask":/var/www:ro "$IMAGE")
+trap 'docker stop "$cid" > /dev/null 2>&1 || true' EXIT
+port=$(docker port "$cid" 8080 | head -n 1 | sed 's/.*://')
+for _ in $(seq 1 90); do
+    body=$(curl --silent --max-time 5 "http://127.0.0.1:$port/" || true)
+    [ "$body" = "hello, world" ] && break
+    sleep 1
+done
+test "$body" = "hello, world" || { echo "unexpected response: $body" >&2; docker logs "$cid" 2>&1 | tail -n 20 >&2; exit 1; }
+docker stop "$cid" > /dev/null
+trap - EXIT
+
 echo "OK"

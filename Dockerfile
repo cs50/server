@@ -53,12 +53,18 @@ RUN apt update && \
     apt update && \
     apt install --install-recommends --no-install-suggests --yes \
         passenger && \
-    passenger-config build-native-support && \
     mkdir --parents /opt/nginx/build-modules && \
-    wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.39.tar.gz && \
-    tar xzf /tmp/v0.39.tar.gz -C /opt/nginx/build-modules && \
-    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.39" --prefix=/opt/nginx && \
-    rm --force /tmp/v0.39.tar.gz
+    wget --directory-prefix /tmp https://github.com/openresty/headers-more-nginx-module/archive/v0.40.tar.gz && \
+    tar xzf /tmp/v0.40.tar.gz -C /opt/nginx/build-modules && \
+    passenger-install-nginx-module --auto --extra-configure-flags="--add-module=/opt/nginx/build-modules/headers-more-nginx-module-0.40" --prefix=/opt/nginx && \
+    rm --force /tmp/v0.40.tar.gz
+
+# Build Passenger's Ruby native support for the image's Ruby and install it system-wide; the package ships it only for
+# Ubuntu's ruby, so otherwise each app compiles it into its own directory on first spawn (which fails if that's read-only)
+RUN ruby /usr/bin/passenger-config build-native-support && \
+    install -D --mode 644 /root/.passenger/native_support/*/*/passenger_native_support.so \
+        "$(ruby -e 'print RbConfig::CONFIG["sitearchdir"]')/passenger_native_support.so" && \
+    rm --force --recursive /root/.passenger
 
 # Generate a self-signed SSL certificate for testing purposes
 RUN mkdir --parents /etc/nginx/ssl && \
