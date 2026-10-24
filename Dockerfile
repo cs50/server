@@ -1,4 +1,6 @@
-FROM cs50/cli
+# Base image tag; ubuntu-26.04 while testing the new runtime, set back to latest when cs50/cli's ubuntu-26.04 branch is merged
+ARG CLI_TAG=ubuntu-26.04
+FROM cs50/cli:${CLI_TAG}
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Default port
