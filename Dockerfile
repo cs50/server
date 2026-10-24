@@ -38,7 +38,7 @@ RUN apt update && \
         Flask-Session \
         mysqlclient \
         python-dateutil \
-        raven[flask] \
+        "sentry-sdk[flask]" \
         SQLAlchemy
 
 # Install Passenger
