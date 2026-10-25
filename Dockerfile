@@ -1,5 +1,5 @@
-# Base image tag; ubuntu-26.04 while testing the new runtime, set back to latest when cs50/cli's ubuntu-26.04 branch is merged
-ARG CLI_TAG=ubuntu-26.04
+# Base image tag (e.g., ubuntu-26.04 to build on a specific release of cs50/cli)
+ARG CLI_TAG=latest
 FROM cs50/cli:${CLI_TAG}
 ARG DEBIAN_FRONTEND=noninteractive
 
