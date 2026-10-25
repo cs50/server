@@ -1,4 +1,5 @@
-# Base image tag (e.g., ubuntu-26.04 to build on a specific release of cs50/cli)
+# Base image tag. The workflow passes the branch name on an ubuntu-<RELEASE> branch (so that branch builds on
+# cs50/cli:ubuntu-<RELEASE>) and latest otherwise; `make build` uses the default.
 ARG CLI_TAG=latest
 FROM cs50/cli:${CLI_TAG}
 ARG DEBIAN_FRONTEND=noninteractive
