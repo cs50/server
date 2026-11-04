@@ -61,4 +61,51 @@ serve_and_expect php / "PHP Version ${v//./\\.}\\."
 echo "- passenger start serves a Rack app from a read-only app root (Passenger must not compile native support into it)"
 serve_and_expect rack / '^hello, world$'
 
+echo "- Python apps get default timeouts for outbound calls (sitecustomize), without touching other sockets or explicit choices"
+# A server that accepts TCP but never answers is the outage failure mode; the untimed calls below must give up at the
+# configured read timeout rather than hang (the 60s run timeout would fail this loudly)
+run --env CS50_CONNECT_TIMEOUT=1 --env CS50_READ_TIMEOUT=1 "$IMAGE" python3 -c '
+import http.client, smtplib, socket, threading, time, urllib.request
+srv = socket.socket(); srv.bind(("127.0.0.1", 0)); srv.listen(8)
+threading.Thread(target=lambda: [srv.accept() for _ in range(8)], daemon=True).start()
+port = srv.getsockname()[1]
+def bounded(f):
+    t = time.time()
+    try: f()
+    except Exception: assert time.time() - t < 3, "gave up too late"
+    else: raise AssertionError("returned instead of timing out")
+bounded(lambda: urllib.request.urlopen(f"http://127.0.0.1:{port}/"))
+bounded(lambda: smtplib.SMTP("127.0.0.1", port))
+assert http.client.HTTPConnection("127.0.0.1", port).timeout == 1.0
+assert http.client.HTTPConnection("127.0.0.1", port, timeout=None).timeout is None, "explicit None must be preserved"
+assert socket.socket().gettimeout() is None, "raw sockets must stay blocking (Passenger loader uses one)"
+'
+run --env CS50_DEFAULT_TIMEOUT=0 "$IMAGE" python3 -c 'import http.client; assert not hasattr(http.client.HTTPConnection.__init__, "__wrapped__")'
+
+echo "- ssh as a client gets connect, keepalive and idle-channel timeouts (git over ssh must not hang a request forever)"
+run "$IMAGE" bash -c 'ssh -G github.com | grep -q "^connecttimeout 15$" && ssh -G github.com | grep -q "^channeltimeout session=300$"'
+
+echo "- passenger-watchdog kills a process stuck in one request and Passenger replaces it, while other requests keep being served"
+# Pipelines into grep -q would trip pipefail (grep exits on the first match and the producer gets SIGPIPE), so grep captured output
+name="smoke-$$-watchdog"
+trap 'docker rm --force "$name" > /dev/null 2>&1 || true' EXIT
+docker run --detach --name "$name" --publish 127.0.0.1::8080 --env CS50_MAX_REQUEST_TIME=10 --volume "$EXAMPLES/flask":/var/www:ro "$IMAGE" > /dev/null
+port=$(docker port "$name" 8080 | head -n 1 | sed 's/.*://')
+for _ in $(seq 1 90); do grep -q hello <<< "$(curl --silent --max-time 5 "http://127.0.0.1:$port/" || true)" && break; sleep 1; done
+curl --silent --max-time 60 "http://127.0.0.1:$port/hang" > /dev/null 2>&1 &
+sleep 3
+stuck=$(docker exec "$name" passenger-status | sed -n 's/.*PID: \([0-9]*\).*Sessions: 1.*/\1/p' | head -n 1)
+test -n "$stuck" || { echo "  no process reported busy with /hang" >&2; docker logs "$name" 2>&1 | tail -n 20 >&2; exit 1; }
+test "$(curl --silent --max-time 5 "http://127.0.0.1:$port/")" = "hello, world"   # a second process serves meanwhile
+acted="passenger-watchdog: process $stuck .*SIGABRT"
+for _ in $(seq 1 40); do grep -q "$acted" <<< "$(docker logs "$name" 2>&1)" && break; sleep 1; done
+logs=$(docker logs "$name" 2>&1)
+grep -q "$acted" <<< "$logs" || { echo "  watchdog did not act on PID $stuck" >&2; tail -n 20 <<< "$logs" >&2; exit 1; }
+grep -q 'application.py", line .*, in hang' <<< "$logs" || { echo "  no stack trace of the stuck request was logged" >&2; exit 1; }
+for _ in $(seq 1 20); do grep -q "PID: $stuck " <<< "$(docker exec "$name" passenger-status)" || break; sleep 1; done
+if grep -q "PID: $stuck " <<< "$(docker exec "$name" passenger-status)"; then echo "  PID $stuck is still in the pool" >&2; exit 1; fi
+test "$(curl --silent --max-time 15 "http://127.0.0.1:$port/")" = "hello, world"
+docker rm --force "$name" > /dev/null
+trap - EXIT
+
 echo "OK"
