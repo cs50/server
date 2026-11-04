@@ -48,6 +48,12 @@ if [[ "$1" == "start" ]] ; then
             break
         fi
     done
+
+    # Kill app processes stuck in one request, since open-source Passenger cannot (see passenger-watchdog).
+    # Stopped again when passenger start returns
+    /opt/cs50/bin/passenger-watchdog &
+    WATCHDOG_PID=$!
+    trap 'kill "$WATCHDOG_PID" 2> /dev/null' EXIT
 fi
 
 # Configure Passenger, as per https://www.phusionpassenger.com/library/config/standalone/reference/

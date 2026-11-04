@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""
+Kill Passenger application processes that have been serving one request for too long.
+
+Open-source Passenger has no request time limit (max_request_time is Enterprise only), and it
+serves Python and Ruby apps one request per process. A request that never finishes, because an
+outbound call hung or a subprocess never exited, therefore pins a process for good; once every
+process is pinned Passenger serves "This website is under heavy load (queue full)" until it is
+restarted. This watchdog is the open-source substitute: started by the `passenger` wrapper
+alongside `passenger start`, it polls `passenger-status --show=xml` and kills any process whose
+current request has run longer than CS50_MAX_REQUEST_TIME seconds. Passenger spawns a
+replacement, the one stuck request gets a 502, and the other slots keep serving.
+
+Only processes with concurrency 1 are considered. Passenger sets last_used when it hands a
+request to a process, so for those `sessions > 0 and now - last_used > limit` means exactly
+"the request it is serving has run longer than the limit". A process that handles many
+requests at once (Node.js reports unlimited concurrency) can legitimately hold a session open
+for hours, a WebSocket for instance, so it is left alone.
+
+The first signal is SIGABRT. Passenger's Python loader handles it by printing every thread's
+stack to the app log before exiting, which records where the request was stuck; for other
+runtimes the default action also ends the process. A process still alive after a grace period
+(stuck in a C call that never returns to the interpreter) gets SIGKILL.
+
+Environment:
+  CS50_MAX_REQUEST_TIME  seconds a single request may run (default 120; 0 disables the watchdog).
+                         Set it above the slowest request the app legitimately serves
+"""
+
+import os
+import signal
+import subprocess
+import sys
+import time
+import xml.etree.ElementTree as ET
+
+GRACE = 10  # seconds between SIGABRT and SIGKILL
+
+
+def log(message):
+    sys.stderr.write(f"passenger-watchdog: {message}\n")
+    sys.stderr.flush()
+
+
+def stuck_processes(limit):
+    """Yield (pid, seconds) for every concurrency-1 process whose current request exceeds limit."""
+    try:
+        xml = subprocess.run(["passenger-status", "--show=xml"], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return
+    if xml.returncode != 0:
+        return  # Passenger not up yet, or shutting down
+    # passenger-status may print a tip line before the document
+    body = xml.stdout[xml.stdout.find("<?xml"):] if "<?xml" in xml.stdout else xml.stdout
+    try:
+        root = ET.fromstring(body)
+    except ET.ParseError:
+        return
+    now = time.time()
+    for process in root.iter("process"):
+        try:
+            pid = int(process.findtext("pid"))
+            concurrency = int(process.findtext("concurrency"))
+            sessions = int(process.findtext("sessions"))
+            last_used = int(process.findtext("last_used")) / 1_000_000  # microseconds since epoch
+        except (TypeError, ValueError):
+            continue
+        if concurrency == 1 and sessions > 0 and now - last_used > limit:
+            yield pid, now - last_used
+
+
+def alive(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def main():
+    try:
+        limit = float(os.environ.get("CS50_MAX_REQUEST_TIME", 120))
+    except ValueError:
+        limit = 120.0
+    if limit <= 0:
+        return
+    interval = max(1.0, min(15.0, limit / 4))
+    log(f"killing requests that run longer than {limit:g}s (CS50_MAX_REQUEST_TIME), checking every {interval:g}s")
+
+    aborted = {}  # pid -> time SIGABRT was sent
+    while True:
+        time.sleep(interval)
+        for pid, seconds in stuck_processes(limit):
+            if pid not in aborted:
+                log(f"process {pid} has been serving one request for {seconds:.0f}s; sending SIGABRT")
+                try:
+                    os.kill(pid, signal.SIGABRT)
+                except OSError as e:
+                    log(f"could not signal {pid}: {e}")
+                    continue
+                aborted[pid] = time.time()
+            elif time.time() - aborted[pid] > GRACE:
+                log(f"process {pid} is still alive {GRACE}s after SIGABRT; sending SIGKILL")
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except OSError as e:
+                    log(f"could not kill {pid}: {e}")
+        # Forget pids that are gone (or were reused by a healthy process)
+        for pid in [p for p in aborted if not alive(p) or time.time() - aborted[p] > 10 * GRACE]:
+            del aborted[pid]
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
