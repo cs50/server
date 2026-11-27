@@ -1,5 +1,4 @@
-# Base image tag. The workflow passes the branch name on an ubuntu-<RELEASE> branch (so that branch builds on
-# cs50/cli:ubuntu-<RELEASE>) and latest otherwise; `make build` uses the default.
+# Base image tag (e.g., ubuntu-26.04 to build on a specific release of cs50/cli)
 ARG CLI_TAG=latest
 FROM cs50/cli:${CLI_TAG}
 ARG DEBIAN_FRONTEND=noninteractive
@@ -77,6 +76,13 @@ COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
 # Must be ENV, not /etc/profile.d: exec-form CMD runs no login shell, and cli.sh skips root, so `passenger` would otherwise resolve to /usr/bin/passenger, bypassing the wrapper
 ENV PATH=/opt/cs50/bin:"$PATH"
+
+# Make every SQLAlchemy engine treat a read-only MySQL server (e.g., the old primary after an RDS blue/green
+# switchover) as a dead connection and reconnect to the writer. The .pth file hooks it into every Python
+# process, but it only activates (and only imports SQLAlchemy) once the process imports SQLAlchemy itself.
+# See opt/cs50/lib/python/cs50_rds_guard.py for how an app that intentionally uses a read-only database opts out.
+RUN install --mode 644 --target-directory "$(python3 -c 'import site; print(site.getsitepackages()[0])')" \
+        /opt/cs50/lib/python/cs50_rds_guard.py /opt/cs50/lib/python/cs50_rds_guard.pth
 
 # When child image is built from this one, copy its files into image
 ONBUILD COPY . /var/www/
