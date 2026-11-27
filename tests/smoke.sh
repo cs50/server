@@ -51,6 +51,15 @@ serve_and_expect() {
     trap - EXIT
 }
 
+echo "- the Python packages the Dockerfile installs import on the base image's Python, and nothing is in conflict"
+# Hello-world Flask serving does not prove the rest of the pip block loads; a base-image Python bump that broke
+# mysqlclient, SQLAlchemy, or sentry-sdk would otherwise pass this script. Import each as an app would.
+run "$IMAGE" bash -c '
+    test "$(command -v python3)" = /usr/local/bin/python3 || { echo "python3 is $(command -v python3), not the base image'"'"'s" >&2; exit 1; }
+    python3 -c "import django, flask, flask_migrate, flask_session, MySQLdb, dateutil, sentry_sdk, sentry_sdk.integrations.flask, sqlalchemy" || exit 1
+    pip3 check > /dev/null || { echo "pip check reports conflicts:" >&2; pip3 check >&2; exit 1; }
+    python3 -c "import sqlalchemy; sqlalchemy.create_engine(\"mysql://u:p@localhost/db\")" || exit 1'
+
 echo "- passenger start serves a Flask app end-to-end (nginx, Passenger, Python)"
 serve_and_expect flask / '^hello, world$'
 
