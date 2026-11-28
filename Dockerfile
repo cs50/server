@@ -78,6 +78,12 @@ RUN chmod a+rx /opt/cs50/bin/*
 # Must be ENV, not /etc/profile.d: exec-form CMD runs no login shell, and cli.sh skips root, so `passenger` would otherwise resolve to /usr/bin/passenger, bypassing the wrapper
 ENV PATH=/opt/cs50/bin:"$PATH"
 
+# Default timeouts for outbound calls from Python apps (see the file's docstring). Python imports sitecustomize from
+# site-packages at start-up; fail the build rather than clobber one the base image has started shipping
+RUN site="$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')" && \
+    test ! -e "$site/sitecustomize.py" && \
+    install --mode 644 /opt/cs50/lib/python/sitecustomize.py "$site/sitecustomize.py"
+
 # When child image is built from this one, copy its files into image
 ONBUILD COPY . /var/www/
 ONBUILD RUN chown -R www-data:www-data /var/www
